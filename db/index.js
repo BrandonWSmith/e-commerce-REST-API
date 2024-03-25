@@ -28,9 +28,16 @@ const getUsersById = (req, res) => {
   });
 }
 
-const createUser = (req, res) => {
+const createUser = async (req, res) => {
   const { first_name, last_name, email, password } = req.body;
 
+  const userCheck = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+  const userCheckArr = userCheck.rows;
+
+  if (userCheckArr.length != 0) {
+    return res.status(400).send(`${email} already exists`);
+  }
+  
   pool.query('INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING *', [first_name, last_name, email, password], (err, results) => {
     if (err) {
       throw err;
