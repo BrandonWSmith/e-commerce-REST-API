@@ -2,7 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
-const db = require('./db/index');
+const users = require('./routes/users')
+const products = require('./routes/products')
 
 app.use(bodyParser.json());
 app.use(
@@ -15,16 +16,16 @@ app.get('/', (req, res) => {
   res.json({ info: 'Node.js, Express, and Postgres API' })
 });
 
-app.get('/users', db.getUsers);
-app.get('/users/:id', db.getUsersById);
-app.post('/users', db.createUser);
-app.put('/users/:id', db.updateUser);
-app.delete('/users/:id', db.deleteUser);
-app.get('/products', db.getProducts);
-app.get('/products/:id', db.getProductById);
-app.post('/products', db.createProduct);
-app.put('/products/:id', db.updateProduct);
-app.delete('/products/:id', db.deleteProduct);
+app.get('/users', users.getUsers);
+app.get('/users/:id', users.getUsersById);
+app.post('/users', users.createUser);
+app.put('/users/:id', users.updateUser);
+app.delete('/users/:id', users.deleteUser);
+app.get('/products', products.getProducts);
+app.get('/products/:id', products.getProductById);
+app.post('/products', products.createProduct);
+app.put('/products/:id', products.updateProduct);
+app.delete('/products/:id', products.deleteProduct);
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
