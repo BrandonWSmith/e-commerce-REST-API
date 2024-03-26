@@ -2,8 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
-const users = require('./routes/users')
-const products = require('./routes/products')
+const session = require('express-session');
+const store = new session.MemoryStore();
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const users = require('./routes/users');
+const products = require('./routes/products');
 
 app.use(bodyParser.json());
 app.use(
@@ -12,8 +16,53 @@ app.use(
   })
 );
 
+app.use(
+  session({
+    secret: 'Password1',
+    cookie: { maxAge: 1000 * 60 * 60 * 24, secure: true, sameSite: 'none' },
+    resave: false,
+    saveUninitialized: false,
+    store
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 app.get('/', (req, res) => {
-  res.json({ info: 'Node.js, Express, and Postgres API' })
+  res.send('Welcome to the eShopping Homepage');
+});
+
+passport.use(new LocalStrategy(
+  function(email, password, done) {
+    users.get('SELECT * FROM users WHERE email = ?', [email], async function(err, user) {
+      if (err) return done(err);
+
+      if (!user) return done(null, false, { message: 'Incorrect email or password.' });
+
+      const matchedPassword = await bcrypt.compare(password, user.password);
+
+      if (password != matchedPassword) return done(null, false, { message: 'Incorrect password.' });
+
+      req.session.authenticated = true;
+      req.session.user = {
+        email,
+        password
+      };
+      return done(null, user);
+    });
+  }
+));
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  users.get('SELECT * FROM users WHERE id = ?', [id], function (err, user) {
+    if (err) return done(err);
+
+    done(null, user);
+  });
 });
 
 app.get('/users', users.getUsers);

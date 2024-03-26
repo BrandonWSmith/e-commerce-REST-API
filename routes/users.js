@@ -1,4 +1,5 @@
 const db = require('../db/index');
+const bcrypt = require('bcrypt');
 
 const getUsers = (req, res) => {
   db.query('SELECT * FROM users ORDER BY id ASC', (err, results) => {
@@ -29,8 +30,11 @@ const createUser = async (req, res) => {
   if (userCheckArr.length != 0) {
     return res.status(400).send(`${email} already exists`);
   }
-  
-  db.query('INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING *', [first_name, last_name, email, password], (err, results) => {
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  db.query('INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING *', [first_name, last_name, email, hashedPassword], (err, results) => {
     if (err) {
       throw err;
     }
@@ -38,11 +42,14 @@ const createUser = async (req, res) => {
   });
 }
 
-const updateUser = (req, res) => {
+const updateUser = async (req, res) => {
   const id = parseInt(req.params.id);
   const { first_name, last_name, email, password } = req.body;
 
-  db.query('UPDATE users SET first_name = $1, last_name = $2, email = $3, password = $4 WHERE id = $5', [first_name, last_name, email, password, id], (err, results) => {
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  db.query('UPDATE users SET first_name = $1, last_name = $2, email = $3, password = $4 WHERE id = $5', [first_name, last_name, email, hashedPassword, id], (err, results) => {
     if (err) {
       throw err;
     }
