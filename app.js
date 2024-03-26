@@ -65,6 +65,23 @@ passport.deserializeUser((id, done) => {
   });
 });
 
+app.get('/login', (req, res) => {
+  res.render('login');
+});
+
+app.post('/login', passport.authenticate('local', { failureRedirect: '/login' }), (req, res) => {
+  res.redirect('profile');
+});
+
+app.get('/profile', (req, res) => {
+  res.render('profile', { user: req.user });
+});
+
+app.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('login');
+});
+
 app.get('/users', users.getUsers);
 app.get('/users/:id', users.getUsersById);
 app.post('/users', users.createUser);
