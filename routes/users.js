@@ -31,10 +31,10 @@ const createUser = async (req, res) => {
     return res.status(400).send(`${email} already exists`);
   }
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
+  /*const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);*/
 
-  db.query('INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING *', [first_name, last_name, email, hashedPassword], (err, results) => {
+  db.query('INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING *', [first_name, last_name, email, password], (err, results) => {
     if (err) {
       throw err;
     }

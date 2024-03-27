@@ -10,11 +10,8 @@ const users = require('./routes/users');
 const products = require('./routes/products');
 
 app.use(bodyParser.json());
-app.use(
-  bodyParser.urlencoded({
-    extended: true
-  })
-);
+app.use(bodyParser.urlencoded({ extended: true }));
+app.set('view engine', 'ejs');
 
 app.use(
   session({
@@ -39,9 +36,10 @@ passport.use(new LocalStrategy(
 
       if (!user) return done(null, false, { message: 'Incorrect email or password.' });
 
-      const matchedPassword = await bcrypt.compare(password, user.password);
+      //const matchedPassword = await bcrypt.compare(password, user.password);
+      const userPassword = users.get('SELECT password FROM users WHERE email = ?', [email]);
 
-      if (password != matchedPassword) return done(null, false, { message: 'Incorrect password.' });
+      if (password != userPassword) return done(null, false, { message: 'Incorrect password.' });
 
       req.session.authenticated = true;
       req.session.user = {
@@ -69,7 +67,7 @@ app.get('/login', (req, res) => {
   res.render('login');
 });
 
-app.post('/login', passport.authenticate('local', { failureRedirect: '/login' }), (req, res) => {
+app.post('/login', passport.authenticate('local', { failureRedirect: '/' }), (req, res) => {
   res.redirect('profile');
 });
 
