@@ -30,22 +30,21 @@ app.get('/', (req, res) => {
 });
 
 passport.use(new LocalStrategy(
-  function(email, password, done) {
+  function verify(email, password, done) {
     users.get('SELECT * FROM users WHERE email = ?', [email], async function(err, user) {
       if (err) return done(err);
 
       if (!user) return done(null, false, { message: 'Incorrect email or password.' });
 
-      //const matchedPassword = await bcrypt.compare(password, user.password);
-      const userPassword = users.get('SELECT password FROM users WHERE email = ?', [email]);
+      const matchedPassword = await bcrypt.compare(password, user.password);
 
-      if (password != userPassword) return done(null, false, { message: 'Incorrect password.' });
+      if (!matchedPassword) return done(null, false, { message: 'Incorrect password.' });
 
-      req.session.authenticated = true;
+      /*req.session.authenticated = true;
       req.session.user = {
         email,
         password
-      };
+      };*/
       return done(null, user);
     });
   }
@@ -67,7 +66,7 @@ app.get('/login', (req, res) => {
   res.render('login');
 });
 
-app.post('/login', passport.authenticate('local', { failureRedirect: '/' }), (req, res) => {
+app.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureMessage: true }), (req, res) => {
   res.redirect('profile');
 });
 

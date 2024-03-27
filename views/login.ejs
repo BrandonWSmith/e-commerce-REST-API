@@ -5,11 +5,17 @@
   </head>
   <body>
     <form action="/login" method="post">
-      <label>Email</label>
-      <input type="text" name="email">
-      <label>Password</label>
-      <input type="text" name="password">
-      <button type="submit">Login</button>
+      <div id="email">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="text" required />
+      </div>
+      <div id="password">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" required />
+      </div>
+      <div id="submit">
+        <button type="submit">Login</button>
+      </div>
     </form>
   </body>
 </html>
