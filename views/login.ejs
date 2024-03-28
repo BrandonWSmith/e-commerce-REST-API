@@ -4,13 +4,18 @@
     <title>eShopping Login</title>
   </head>
   <body>
+    <ul>
+      <% if(messages.error) { %>
+        <li><%= messages.error %></li>
+      <% } %>
+    </ul>
     <form action="/login" method="post">
       <div id="email">
-        <label for="email">Email</label>
+        <label for="email">Email:</label>
         <input id="email" name="email" type="text" required />
       </div>
       <div id="password">
-        <label for="password">Password</label>
+        <label for="password">Password:</label>
         <input id="password" name="password" type="password" required />
       </div>
       <div id="submit">

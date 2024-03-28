@@ -1,17 +1,64 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
 const session = require('express-session');
 const store = new session.MemoryStore();
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const flash = require('express-flash');
+const bcrypt = require('bcrypt');
+const db = require('./db/index');
 const users = require('./routes/users');
 const products = require('./routes/products');
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
+
+passport.use(new LocalStrategy(
+  { usernameField: 'email' },
+  (email, password, done) => {
+    console.log(email, password);
+    db.query('SELECT * FROM users WHERE email = $1', [email],
+    (err, results) => {
+      if (err) return done(err);
+
+      console.log(results.rows);
+
+      if (results.rows.length > 0) {
+        const user = results.rows[0];
+
+        bcrypt.compare(password, user.password, (err, isMatch) => {
+          if (err) {
+            console.log(err);
+          }
+          if (isMatch) {
+            return done(null, user);
+          }
+          else {
+            return done(null, false, { message: 'Incorrect Password.' });
+          }
+        });
+      }
+      else {
+        return done(null, false, { message: 'Email Not Found.' });
+      }
+    });
+  }
+));
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  db.query('SELECT * FROM users WHERE id = $1', [id], function (err, results) {
+    if (err) return done(err);
+    console.log(`ID id ${results.rows[0].id}`);
+
+    done(null, results.rows[0]);
+  });
+});
 
 app.use(
   session({
@@ -25,58 +72,34 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(flash());
+
 app.get('/', (req, res) => {
   res.send('Welcome to the eShopping Homepage');
 });
 
-passport.use(new LocalStrategy(
-  function verify(email, password, done) {
-    users.get('SELECT * FROM users WHERE email = ?', [email], async function(err, user) {
-      if (err) return done(err);
-
-      if (!user) return done(null, false, { message: 'Incorrect email or password.' });
-
-      const matchedPassword = await bcrypt.compare(password, user.password);
-
-      if (!matchedPassword) return done(null, false, { message: 'Incorrect password.' });
-
-      /*req.session.authenticated = true;
-      req.session.user = {
-        email,
-        password
-      };*/
-      return done(null, user);
-    });
-  }
-));
-
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
-passport.deserializeUser((id, done) => {
-  users.get('SELECT * FROM users WHERE id = ?', [id], function (err, user) {
-    if (err) return done(err);
-
-    done(null, user);
-  });
-});
-
 app.get('/login', (req, res) => {
+  console.log(req.session.flash);
   res.render('login');
 });
 
-app.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureMessage: true }), (req, res) => {
-  res.redirect('profile');
-});
+app.post('/login', passport.authenticate('local',
+  {
+    successRedirect: '/',
+    failureRedirect: '/login',
+    failureFlash: true
+  }
+));
 
 app.get('/profile', (req, res) => {
   res.render('profile', { user: req.user });
 });
 
 app.get('/logout', (req, res) => {
-  req.logout();
-  res.redirect('login');
+  req.logout((err) => {
+    if (err) return next (err);
+    res.redirect('/');
+  });
 });
 
 app.get('/users', users.getUsers);
