@@ -38,7 +38,7 @@ const createUser = async (req, res) => {
     if (err) {
       throw err;
     }
-    res.status(201).send(`User added with ID: ${results.rows[0].id}`);
+    res.redirect('/');
   });
 }
 

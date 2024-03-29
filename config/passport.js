@@ -11,8 +11,6 @@ passport.use(new LocalStrategy(
     (err, results) => {
       if (err) return done(err);
 
-      console.log(results.rows);
-
       if (results.rows.length > 0) {
         const user = results.rows[0];
 
@@ -21,6 +19,7 @@ passport.use(new LocalStrategy(
             console.log(err);
           }
           if (isMatch) {
+            console.log(results.rows);
             return done(null, user);
           }
           else {

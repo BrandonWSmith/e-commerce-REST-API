@@ -28,11 +28,10 @@ app.use(passport.session());
 app.use(flash());
 
 app.get('/', (req, res) => {
-  res.send('Welcome to the eShopping Homepage');
+  res.render('index');
 });
 
 app.get('/login', (req, res) => {
-  console.log(req.session.flash);
   res.render('login');
 });
 
@@ -43,6 +42,12 @@ app.post('/login', passport.authenticate('local',
     failureFlash: true
   }
 ));
+
+app.get('/register', (req, res) => {
+  res.render('register');
+});
+
+app.post('/register', users.createUser);
 
 app.get('/profile', (req, res) => {
   res.render('profile', { user: req.user });
