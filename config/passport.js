@@ -6,7 +6,6 @@ const bcrypt = require('bcrypt');
 passport.use(new LocalStrategy(
   { usernameField: 'email' },
   (email, password, done) => {
-    console.log(email, password);
     db.query('SELECT * FROM users WHERE email = $1', [email],
     (err, results) => {
       if (err) return done(err);
@@ -19,7 +18,6 @@ passport.use(new LocalStrategy(
             console.log(err);
           }
           if (isMatch) {
-            console.log(results.rows);
             return done(null, user);
           }
           else {
@@ -35,14 +33,13 @@ passport.use(new LocalStrategy(
 ));
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  return done(null, user.id);
 });
 
 passport.deserializeUser((id, done) => {
-  db.query('SELECT * FROM users WHERE id = $1', [id], function (err, results) {
+  db.query('SELECT * FROM users WHERE id = $1', [id], (err, results) => {
     if (err) return done(err);
-    console.log(`ID id ${results.rows[0].id}`);
-
-    done(null, results.rows[0]);
+    
+    return done(null, results.rows[0]);
   });
 });

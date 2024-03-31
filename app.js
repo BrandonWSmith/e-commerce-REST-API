@@ -2,10 +2,9 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const session = require('express-session');
-const store = new session.MemoryStore();
+const flash = require('express-flash');
 const passport = require('passport');
 require('./config/passport');
-const flash = require('express-flash');
 const users = require('./routes/users');
 const products = require('./routes/products');
 
@@ -16,10 +15,9 @@ app.set('view engine', 'ejs');
 app.use(
   session({
     secret: 'Password1',
-    cookie: { maxAge: 1000 * 60 * 60 * 24, secure: true, sameSite: 'none' },
+    cookie: { maxAge: 1000 * 60 * 60 * 24 },
     resave: false,
-    saveUninitialized: false,
-    store
+    saveUninitialized: false
   })
 );
 
@@ -37,7 +35,7 @@ app.get('/login', (req, res) => {
 
 app.post('/login', passport.authenticate('local',
   {
-    successRedirect: '/',
+    successRedirect: '/dashboard',
     failureRedirect: '/login',
     failureFlash: true
   }
@@ -49,8 +47,8 @@ app.get('/register', (req, res) => {
 
 app.post('/register', users.createUser);
 
-app.get('/profile', (req, res) => {
-  res.render('profile', { user: req.user });
+app.get('/dashboard', (req, res) => {
+  res.render('dashboard', { user: req.user.first_name });
 });
 
 app.get('/logout', (req, res) => {

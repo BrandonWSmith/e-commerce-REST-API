@@ -34,11 +34,13 @@ const createUser = async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  db.query('INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING *', [first_name, last_name, email, hashedPassword], (err, results) => {
+  const created = new Date();
+
+  db.query('INSERT INTO users (first_name, last_name, email, password, created) VALUES ($1, $2, $3, $4, $5) RETURNING *', [first_name, last_name, email, hashedPassword, created], (err, results) => {
     if (err) {
       throw err;
     }
-    res.redirect('/');
+    res.redirect('/login');
   });
 }
 
@@ -49,11 +51,13 @@ const updateUser = async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  db.query('UPDATE users SET first_name = $1, last_name = $2, email = $3, password = $4 WHERE id = $5', [first_name, last_name, email, hashedPassword, id], (err, results) => {
+  const modified = new Date();
+
+  db.query('UPDATE users SET first_name = $1, last_name = $2, email = $3, password = $4, modified = $5 WHERE id = $6', [first_name, last_name, email, hashedPassword, modified, id], (err, results) => {
     if (err) {
       throw err;
     }
-    res.status(200).send(`User modified with ID: ${id}`);
+    res.redirect('/dashboard');
   });
 }
 

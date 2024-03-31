@@ -5,6 +5,11 @@
   </head>
   <body>
     <h1>Login</h1>
+    <ul>
+      <% if (messages.success_msg) { %>
+        <li><%= messages.success_msg %></li>
+      <% } %>
+    </ul>
     <form action="/login" method="post">
       <div id="email">
         <label for="email">Email:</label>

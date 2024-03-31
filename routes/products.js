@@ -21,9 +21,11 @@ const getProductById = (req, res) => {
 }
 
 const createProduct = (req, res) => {
-  const { name, price } = req.body;
+  const { name, price, description } = req.body;
 
-  db.query('INSERT INTO products (name, price) VALUES ($1, $2) RETURNING *', [name, price], (err, results) => {
+  const created = new Date();
+
+  db.query('INSERT INTO products (name, price, description, created) VALUES ($1, $2, $3, $4) RETURNING *', [name, price, description, created], (err, results) => {
     if (err) {
       throw err;
     }
@@ -33,9 +35,11 @@ const createProduct = (req, res) => {
 
 const updateProduct = (req, res) => {
   const id = parseInt(req.params.id);
-  const { name, price } = req.body;
+  const { name, price, description } = req.body;
 
-  db.query('UPDATE products SET name = $1, price = $2 WHERE id = $3', [name, price, id], (err, results) => {
+  const modified = new Date();
+
+  db.query('UPDATE products SET name = $1, price = $2, description = $3, modified = $4 WHERE id = $5', [name, price, description, modified, id], (err, results) => {
     if (err) {
       throw err;
     }
