@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 passport.use(new LocalStrategy(
   { usernameField: 'email' },
   (email, password, done) => {
-    db.query('SELECT * FROM users WHERE email = $1', [email],
+    db.query('SELECT * FROM users WHERE email = $1', [email.toLowerCase()],
     (err, results) => {
       if (err) return done(err);
 

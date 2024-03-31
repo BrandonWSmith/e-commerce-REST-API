@@ -54,6 +54,7 @@ app.get('/dashboard', (req, res) => {
 app.get('/logout', (req, res) => {
   req.logout((err) => {
     if (err) return next (err);
+    req.flash('logout_msg', "You have been logged out.")
     res.redirect('/');
   });
 });

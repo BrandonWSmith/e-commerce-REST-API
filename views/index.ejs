@@ -5,6 +5,11 @@
   </head>
   <body>
     <h1 id="header">Welcome to eShopping</h1>
+    <ul>
+      <% if (messages.logout_msg) { %>
+        <li><%= messages.logout_msg %></li>
+      <% } %>
+    </ul>
     <p id="greeting-prompt">What would you like to do?</p>
     <button id="login-button" onclick="window.location.href='/login';">
       Login

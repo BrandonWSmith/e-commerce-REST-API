@@ -1,5 +1,10 @@
+const express = require('express');
+const app = express();
+const flash = require('express-flash');
 const db = require('../db/index');
 const bcrypt = require('bcrypt');
+
+app.use(flash());
 
 const getUsers = (req, res) => {
   db.query('SELECT * FROM users ORDER BY id ASC', (err, results) => {
@@ -24,11 +29,12 @@ const getUsersById = (req, res) => {
 const createUser = async (req, res) => {
   const { first_name, last_name, email, password } = req.body;
 
-  const userCheck = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+  const userCheck = await db.query('SELECT * FROM users WHERE email = $1', [email.toLowerCase()]);
   const userCheckArr = userCheck.rows;
 
   if (userCheckArr.length != 0) {
-    return res.status(400).send(`${email} already exists`);
+    req.flash('failure_msg', "Email already registered. Please try another email or log in.");
+    res.redirect('/register');
   }
 
   const salt = await bcrypt.genSalt(10);
@@ -36,10 +42,11 @@ const createUser = async (req, res) => {
 
   const created = new Date();
 
-  db.query('INSERT INTO users (first_name, last_name, email, password, created) VALUES ($1, $2, $3, $4, $5) RETURNING *', [first_name, last_name, email, hashedPassword, created], (err, results) => {
+  db.query('INSERT INTO users (first_name, last_name, email, password, created) VALUES ($1, $2, $3, $4, $5) RETURNING *', [first_name.toLowerCase(), last_name.toLowerCase(), email.toLowerCase(), hashedPassword, created], (err, results) => {
     if (err) {
       throw err;
     }
+    req.flash('success_msg', "You have been registered! Please log in.");
     res.redirect('/login');
   });
 }
@@ -53,7 +60,7 @@ const updateUser = async (req, res) => {
 
   const modified = new Date();
 
-  db.query('UPDATE users SET first_name = $1, last_name = $2, email = $3, password = $4, modified = $5 WHERE id = $6', [first_name, last_name, email, hashedPassword, modified, id], (err, results) => {
+  db.query('UPDATE users SET first_name = $1, last_name = $2, email = $3, password = $4, modified = $5 WHERE id = $6', [first_name.toLowerCase(), last_name.toLowerCase(), email.toLowerCase(), hashedPassword, modified, id], (err, results) => {
     if (err) {
       throw err;
     }

@@ -9,6 +9,10 @@
       <% if (messages.success_msg) { %>
         <li><%= messages.success_msg %></li>
       <% } %>
+
+      <% if (messages.error) { %>
+        <li><%= messages.error %></li>
+      <% } %>
     </ul>
     <form action="/login" method="post">
       <div id="email">
