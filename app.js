@@ -59,6 +59,10 @@ app.get('/logout', (req, res) => {
   });
 });
 
+app.get('/shop', (req, res) => {
+  res.render('shop');
+});
+
 app.get('/users', users.getUsers);
 app.get('/users/:id', users.getUsersById);
 app.post('/users', users.createUser);
@@ -66,6 +70,7 @@ app.put('/users/:id', users.updateUser);
 app.delete('/users/:id', users.deleteUser);
 app.get('/products', products.getProducts);
 app.get('/products/:id', products.getProductById);
+app.get('/products?name={name}', products.getProductByName);
 app.post('/products', products.createProduct);
 app.put('/products/:id', products.updateProduct);
 app.delete('/products/:id', products.deleteProduct);

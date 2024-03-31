@@ -20,6 +20,17 @@ const getProductById = (req, res) => {
   });
 }
 
+const getProductByName = (req, res) => {
+  const name = req.params.name;
+
+  db.query('SELECT * FROM products WHERE name = $1', [name], (err, results) => {
+    if (err) {
+      throw err;
+    }
+    res.status(200).json(results.rows);
+  });
+}
+
 const createProduct = (req, res) => {
   const { name, price, description } = req.body;
 
@@ -61,6 +72,7 @@ const deleteProduct = (req, res) => {
 module.exports = {
   getProducts,
   getProductById,
+  getProductByName,
   createProduct,
   updateProduct,
   deleteProduct
