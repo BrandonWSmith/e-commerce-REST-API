@@ -9,6 +9,7 @@ const users = require('./routes/users');
 const products = require('./routes/products');
 const carts = require('./routes/carts');
 const carts_products = require('./routes/carts_products');
+const orders = require('./routes/orders');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -65,26 +66,41 @@ app.get('/shop', (req, res) => {
   res.render('shop');
 });
 
+//Users Endpoints
 app.get('/users', users.getUsers);
 app.get('/users/:id', users.getUsersById);
 app.post('/users', users.createUser);
 app.put('/users/:id', users.updateUser);
 app.delete('/users/:id', users.deleteUser);
+
+//Products Endpoints
 app.get('/products', products.getProducts);
 app.get('/products/:id', products.getProductById);
 app.get('/products?name={name}', products.getProductByName);
 app.post('/products', products.createProduct);
 app.put('/products/:id', products.updateProduct);
 app.delete('/products/:id', products.deleteProduct);
+
+//Carts Endpoints
 app.get('/carts', carts.getCarts);
 app.get('/carts/:id', carts.getCartById);
 app.post('/carts', carts.createCart);
 app.put('/carts/:id', carts.updateCart);
 app.delete('/carts/:id', carts.deleteCart);
+
+//Carts Products Endpoints
 app.get('/carts/:id/products', carts_products.getCartsProductsByCartId);
 app.post('/carts/:id/products', carts_products.addToCart);
 app.put('/carts/:id/products', carts_products.updateInCart);
 app.delete('/carts/:id/products', carts_products.deleteInCart);
+
+//Orders Endpoints
+app.get('/orders', orders.getOrders);
+app.get('/orders/:id', orders.getOrderById);
+app.get('/users/:id/orders', orders.getOrdersByUserId);
+app.post('/users/:id/orders', orders.createOrder);
+app.put('/users/:id/orders/:order_id', orders.updateOrder);
+app.delete('/orders/:id', orders.deleteOrder);
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
