@@ -8,6 +8,7 @@ require('./config/passport');
 const users = require('./routes/users');
 const products = require('./routes/products');
 const carts = require('./routes/carts');
+const carts_products = require('./routes/carts_products');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -80,6 +81,10 @@ app.get('/carts/:id', carts.getCartById);
 app.post('/carts', carts.createCart);
 app.put('/carts/:id', carts.updateCart);
 app.delete('/carts/:id', carts.deleteCart);
+app.get('/carts/:id/products', carts_products.getCartsProductsByCartId);
+app.post('/carts/:id/products', carts_products.addToCart);
+app.put('/carts/:id/products', carts_products.updateInCart);
+app.delete('/carts/:id/products', carts_products.deleteInCart);
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
