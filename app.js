@@ -7,6 +7,7 @@ const passport = require('passport');
 require('./config/passport');
 const users = require('./routes/users');
 const products = require('./routes/products');
+const carts = require('./routes/carts');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -74,6 +75,11 @@ app.get('/products?name={name}', products.getProductByName);
 app.post('/products', products.createProduct);
 app.put('/products/:id', products.updateProduct);
 app.delete('/products/:id', products.deleteProduct);
+app.get('/carts', carts.getCarts);
+app.get('/carts/:id', carts.getCartById);
+app.post('/carts', carts.createCart);
+app.put('/carts/:id', carts.updateCart);
+app.delete('/carts/:id', carts.deleteCart);
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
