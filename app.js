@@ -10,6 +10,7 @@ const products = require('./routes/products');
 const carts = require('./routes/carts');
 const carts_products = require('./routes/carts_products');
 const orders = require('./routes/orders');
+const orders_products = require('./routes/orders_products');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -89,6 +90,7 @@ app.put('/carts/:id', carts.updateCart);
 app.delete('/carts/:id', carts.deleteCart);
 
 //Carts Products Endpoints
+app.get('/carts_products', carts_products.getCartsProducts);
 app.get('/carts/:id/products', carts_products.getCartsProductsByCartId);
 app.post('/carts/:id/products', carts_products.addToCart);
 app.put('/carts/:id/products', carts_products.updateInCart);
@@ -101,6 +103,13 @@ app.get('/users/:id/orders', orders.getOrdersByUserId);
 app.post('/users/:id/orders', orders.createOrder);
 app.put('/users/:id/orders/:order_id', orders.updateOrder);
 app.delete('/orders/:id', orders.deleteOrder);
+
+//Orders Products Endpoints
+app.get('/orders_products', orders_products.getOrderProducts);
+app.get('/orders/:id/products', orders_products.getOrdersProductsByOrderId);
+app.post('/orders/:id/products', orders_products.addToOrder);
+app.put('/orders/:id/products', orders_products.updateInOrder);
+app.delete('/orders/:id/products', orders_products.deleteInOrder);
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
