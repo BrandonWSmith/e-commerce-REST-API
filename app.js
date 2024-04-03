@@ -29,14 +29,15 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
+//Root Endpoint
 app.get('/', (req, res) => {
   res.render('index');
 });
 
+//Login Endpoints
 app.get('/login', (req, res) => {
   res.render('login');
 });
-
 app.post('/login', passport.authenticate('local',
   {
     successRedirect: '/dashboard',
@@ -45,16 +46,13 @@ app.post('/login', passport.authenticate('local',
   }
 ));
 
+//Register Endpoints
 app.get('/register', (req, res) => {
   res.render('register');
 });
-
 app.post('/register', users.createUser);
 
-app.get('/dashboard', (req, res) => {
-  res.render('dashboard', { user: req.user.first_name });
-});
-
+//Logout Endpoint
 app.get('/logout', (req, res) => {
   req.logout((err) => {
     if (err) return next (err);
@@ -63,9 +61,18 @@ app.get('/logout', (req, res) => {
   });
 });
 
+//Dashboard Endpoint
+app.get('/dashboard', (req, res) => {
+  res.render('dashboard', { user: req.user.first_name });
+});
+
+//Shop Endpoint
 app.get('/shop', (req, res) => {
   res.render('shop');
 });
+
+//Checkout Endpoint
+app.post('/users/:id/cart/:cart_id/checkout', carts.checkout);
 
 //Users Endpoints
 app.get('/users', users.getUsers);
@@ -84,10 +91,11 @@ app.delete('/products/:id', products.deleteProduct);
 
 //Carts Endpoints
 app.get('/carts', carts.getCarts);
-app.get('/carts/:id', carts.getCartById);
-app.post('/carts', carts.createCart);
-app.put('/carts/:id', carts.updateCart);
-app.delete('/carts/:id', carts.deleteCart);
+app.get('carts/:id', carts.getCartById);
+app.get('/users/:id/cart', carts.getCartByUserId);
+app.post('/users/:id/cart', carts.createCart);
+app.put('/users/:id/cart/:cart_id', carts.updateCart);
+app.delete('/users/:id/cart/:cart_id', carts.deleteCart);
 
 //Carts Products Endpoints
 app.get('/carts_products', carts_products.getCartsProducts);

@@ -10,9 +10,9 @@ const getOrders = (req, res) => {
 }
 
 const getOrderById = (req, res) => {
-  const id = parseInt(req.params.id);
+  const order_id = parseInt(req.params.id);
 
-  db.query('SELECT * FROM orders WHERE id = $1', [id], (err, results) => {
+  db.query('SELECT * FROM orders WHERE id = $1', [order_id], (err, results) => {
     if (err) {
       throw err;
     }
@@ -33,7 +33,6 @@ const getOrdersByUserId = (req, res) => {
 
 const createOrder = (req, res) => {
   const user_id = parseInt(req.params.id);
-
   const created = new Date();
 
   db.query('INSERT INTO orders (user_id, created) VALUES ($1, $2) RETURNING *', [user_id, created], (err, results) => {
@@ -46,7 +45,6 @@ const createOrder = (req, res) => {
 
 const updateOrder = (req, res) => {
   const order_id = parseInt(req.params.order_id);
-
   const modified = new Date();
 
   db.query('UPDATE orders SET modified = $1 WHERE id = $2', [modified, order_id], (err, results) => {
