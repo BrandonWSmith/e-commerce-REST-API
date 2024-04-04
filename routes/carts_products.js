@@ -10,7 +10,7 @@ const getCartsProducts = (req, res) => {
 }
 
 const getCartsProductsByCartId = (req, res) => {
-  const cart_id = parseInt(req.params.id);
+  const cart_id = parseInt(req.params.cart_id);
 
   db.query('SELECT * FROM carts_products WHERE cart_id = $1', [cart_id], (err, results) => {
     if (err) {
@@ -20,27 +20,38 @@ const getCartsProductsByCartId = (req, res) => {
   });
 }
 
-const addToCart = (req, res) => {
-  const cart_id = parseInt(req.params.id);
+const addToCart = async (req, res) => {
+  const cart_id = parseInt(req.params.cart_id);
   const product_id = parseInt(req.query.product_id);
-
+  const quantity = parseInt(req.query.quantity);
+  const getPrice = await db.query('SELECT price FROM products WHERE id = $1', [product_id]);
+  const price = Object.values(getPrice.rows[0]).toString().slice(1);
   const added = new Date();
 
-  db.query('INSERT INTO carts_products (product_id, cart_id, added) VALUES ($1, $2, $3) RETURNING *', [product_id, cart_id, added], (err, results) => {
-    if (err) {
-      throw err;
-    }
-    res.status(201).send(`Product ID: ${product_id} added to cart ID: ${cart_id}`);
-  });
+  const checkExists = await db.query('SELECT * FROM carts_products WHERE cart_id = $1 AND product_id = $2', [cart_id, product_id]);
+
+  if (checkExists.rows.length != 0) {
+    res.status(400).send(`Product ID: ${product_id} already in cart ID: ${cart_id}`);
+  }
+  else {
+    db.query('INSERT INTO carts_products (quantity, price, cart_id, product_id, added) VALUES ($1, $2, $3, $4, $5) RETURNING *', [quantity, price, cart_id, product_id, added], (err, results) => {
+      if (err) {
+        throw err;
+      }
+      res.status(201).send(`Product ID: ${product_id} added to cart ID: ${cart_id}`);
+    });
+  }
 }
 
-const updateInCart = (req, res) => {
-  const cart_id = parseInt(req.params.id);
+const updateInCart = async (req, res) => {
+  const cart_id = parseInt(req.params.cart_id);
   const product_id = parseInt(req.query.product_id);
-
+  const quantity = parseInt(req.query.quantity);
+  const getPrice = await db.query('SELECT price FROM products WHERE id = $1', [product_id]);
+  const price = Object.values(getPrice.rows[0]).toString().slice(1);
   const modified = new Date();
 
-  db.query('UPDATE carts_products SET product_id = $1, modified = $3 WHERE cart_id = $2', [product_id, cart_id, modified], (err, results) => {
+  db.query('UPDATE carts_products SET quantity = $1, price = $2, cart_id = $3, product_id = $4, modified = $5', [quantity, price, cart_id, product_id, modified], (err, results) => {
     if (err) {
       throw err;
     }
@@ -48,15 +59,30 @@ const updateInCart = (req, res) => {
   });
 }
 
-const deleteInCart = (req, res) => {
-  const cart_id = parseInt(req.params.id);
+const deleteInCart = (req, res, next) => {
+  const cart_id = parseInt(req.params.cart_id);
   const product_id = parseInt(req.query.product_id);
 
   db.query('DELETE FROM carts_products WHERE cart_id = $1 AND product_id = $2', [cart_id, product_id], (err, results) => {
     if (err) {
       throw err;
     }
-    res.status(200).send(`Product ID ${product_id} deleted from cart ID: ${cart_id}`);
+    //res.status(200).send(`Product ID ${product_id} deleted from cart ID: ${cart_id}`);
+    req.flash('carts_products-deleted', `Product ID: ${product_id} deleted in cart ID: ${cart_id}`);
+    next();
+  });
+}
+
+const deleteAllInCart = (req, res, next) => {
+  const cart_id = parseInt(req.params.cart_id);
+
+  db.query('DELETE FROM carts_products WHERE cart_id = $1', [cart_id], (err, results) => {
+    if (err) {
+      throw err;
+    }
+    //res.status(200).send(`Product ID ${product_id} deleted from cart ID: ${cart_id}`);
+    req.flash('carts_products-deleted', `All products deleted in cart ID: ${cart_id}`);
+    next();
   });
 }
 
@@ -65,5 +91,6 @@ module.exports = {
   getCartsProductsByCartId,
   addToCart,
   updateInCart,
-  deleteInCart
+  deleteInCart,
+  deleteAllInCart
 }

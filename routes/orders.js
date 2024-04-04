@@ -1,4 +1,9 @@
+const express = require('express');
+const app = express();
+const flash = require('express-flash');
 const db = require('../db/index');
+
+app.use(flash());
 
 const getOrders = (req, res) => {
   db.query('SELECT * FROM orders ORDER BY id ASC', (err, results) => {
@@ -31,7 +36,7 @@ const getOrdersByUserId = (req, res) => {
   });
 }
 
-const createOrder = (req, res) => {
+const createOrder = (req, res, next) => {
   const user_id = parseInt(req.params.id);
   const created = new Date();
 
@@ -39,7 +44,9 @@ const createOrder = (req, res) => {
     if (err) {
       throw err;
     }
-    res.status(201).send(`Order created with ID: ${results.rows[0].id}`);
+    //res.status(201).send(`Order created with ID: ${results.rows[0].id}`);
+    req.flash('order_created', `Order created with ID: ${results.rows[0].id}`);
+    next();
   });
 }
 
