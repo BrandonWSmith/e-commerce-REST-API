@@ -23,7 +23,7 @@ const getCartsProductsByCartId = (req, res) => {
 const addToCart = async (req, res) => {
   const cart_id = parseInt(req.params.cart_id);
   const product_id = parseInt(req.query.product_id);
-  const quantity = parseInt(req.query.quantity);
+  const quantity = parseInt(req.body.quantity);
   const getPrice = await db.query('SELECT price FROM products WHERE id = $1', [product_id]);
   const price = Object.values(getPrice.rows[0]).toString().slice(1);
   const added = new Date();

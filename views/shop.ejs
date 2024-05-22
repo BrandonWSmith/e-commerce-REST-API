@@ -14,7 +14,9 @@
           </br>
           <%= product.description %>
           </br>
-          <form action="/users/<%= user.id %>/cart/<%= cart_id %>/products?product_id=<%= product.id %>&quantity=1" method="post">
+          <form action="/users/<%= user.id %>/cart/<%= cart_id %>/products?product_id=<%= product.id %>" method="post">
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" min="1" max="1000">
             <button type="submit">Add To Cart</button>
           </form>
         </li>
