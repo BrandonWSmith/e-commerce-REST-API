@@ -13,7 +13,7 @@ const getCartsProductsByCartId = (req, res, next) => {
   try {
     const cart_id = parseInt(req.params.cart_id) || parseInt(req.cart[0].id);
 
-    db.query('SELECT * FROM carts_products WHERE cart_id = $1', [cart_id], (err, results) => {
+    db.query('SELECT * FROM carts_products JOIN products ON carts_products.product_id = products.id WHERE cart_id = $1', [cart_id], (err, results) => {
       if (err) {
         throw err;
       }
@@ -30,6 +30,8 @@ const getCartsProductsByCartId = (req, res, next) => {
 const addToCart = async (req, res) => {
   const cart_id = parseInt(req.params.cart_id);
   const product_id = parseInt(req.query.product_id);
+  const getProductName = await db.query('SELECT name FROM products WHERE id = $1', [product_id]);
+  const product_name = Object.values(getProductName.rows[0]).toString();
   const quantity = parseInt(req.body.quantity);
   const getPrice = await db.query('SELECT price FROM products WHERE id = $1', [product_id]);
   const price = Object.values(getPrice.rows[0]).toString().slice(1);
@@ -45,7 +47,7 @@ const addToCart = async (req, res) => {
       if (err) {
         throw err;
       }
-      console.log(`Product ID: ${product_id} added to cart ID: ${cart_id}`);
+      console.log(`${product_name} x ${quantity} added to cart ID: ${cart_id}`);
       res.status(201);
     });
   }

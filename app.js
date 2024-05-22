@@ -72,10 +72,17 @@ app.get('/users/:id/dashboard', (req, res) => {
 
 //Shop Endpoint
 app.get('/users/:id/shop', carts.getCartByUserId, carts.createCart, async (req, res) => {
-  const results = await fetch('http://localhost:3000/products');
-  const productList = await results.json();
+  const fetchProducts = await fetch('http://localhost:3000/products');
+  const product_list = await fetchProducts.json();
 
-  res.render('shop', { productList, user: req.user, cart_id: req.cart[0].id });
+  res.render('shop', { product_list, user: req.user, cart_id: req.cart[0].id });
+});
+
+//Cart Endpoint
+app.get('/users/:id/cart', carts.getCartByUserId, carts_products.getCartsProductsByCartId, async (req, res) => {
+  const cart_products = req.cart_products;
+
+  res.render('cart', { cart_products, user: req.user })
 });
 
 //Checkout Endpoint

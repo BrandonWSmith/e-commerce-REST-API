@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>eShopping Cart</title>
+  </head>
+  <body>
+    <h1 id="header">Welcome, <%= user.first_name.charAt(0).toUpperCase() + user.first_name.slice(1) %></h1>
+    <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/dashboard';">
+      Dashboard
+    </button>
+    <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/shop';">
+      Shop
+    </button>
+    <button id="logout-button" onclick="window.location.href='/users/<%= user.id %>/logout';">
+      Logout
+    </button>
+    <ul>
+      <% if (cart_products.length < 1) { %>
+          <li>Your cart is empty</li>
+      <% } %>
+      <% cart_products.forEach(product => { %>
+        <li>
+          <%= product.name %>
+          </br>
+          Quantity: <%= product.quantity %>
+          </br>
+          Total: <%= product.total %>
+          </br>
+        </li>
+      <% }); %>
+    </ul>
+  </body>
+</html>
