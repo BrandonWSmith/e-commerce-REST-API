@@ -9,15 +9,22 @@ const getCartsProducts = (req, res) => {
   });
 }
 
-const getCartsProductsByCartId = (req, res) => {
-  const cart_id = parseInt(req.params.cart_id);
+const getCartsProductsByCartId = (req, res, next) => {
+  try {
+    const cart_id = parseInt(req.params.cart_id) || parseInt(req.cart[0].id);
 
-  db.query('SELECT * FROM carts_products WHERE cart_id = $1', [cart_id], (err, results) => {
-    if (err) {
-      throw err;
-    }
-    res.status(200).send(results.rows);
-  });
+    db.query('SELECT * FROM carts_products WHERE cart_id = $1', [cart_id], (err, results) => {
+      if (err) {
+        throw err;
+      }
+      req.cart_products = results.rows;
+      res.status(200);
+      next();
+    });
+  }
+  catch (err) {
+    next();
+  }
 }
 
 const addToCart = async (req, res) => {

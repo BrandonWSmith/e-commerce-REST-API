@@ -28,7 +28,6 @@ const getCartByUserId = (req, res, next) => {
     if (err) {
       throw err;
     }
-
     req.cart = results.rows;
     res.status(200);
     next();
@@ -65,14 +64,14 @@ const updateCart = (req, res) => {
 }
 
 const deleteCart = (req, res, next) => {
-  const cart_id = parseInt(req.params.cart_id);
+  const cart_id = parseInt(req.params.cart_id) || parseInt(req.cart[0].id);
 
   db.query('DELETE FROM carts WHERE id = $1', [cart_id], (err, results) => {
     if (err) {
       throw err;
     }
     //res.status(200).send(`Cart deleted with ID: ${cart_id}`);
-    req.flash('cart_deleted', `Cart deleted with ID: ${cart_id}`);
+    console.log(`Cart deleted with ID: ${cart_id}`);
     next();
   });
 }

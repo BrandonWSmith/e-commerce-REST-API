@@ -41,7 +41,7 @@ app.get('/login', (req, res) => {
 });
 app.post('/login', passport.authenticate('local',
   {
-    successRedirect: '/dashboard',
+    successRedirect: `/users/:id/dashboard`,
     failureRedirect: '/login',
     failureFlash: true
   }
@@ -54,7 +54,10 @@ app.get('/register', (req, res) => {
 app.post('/register', users.createUser);
 
 //Logout Endpoint
-app.get('/logout', (req, res) => {
+app.get('/users/:id/logout', carts.getCartByUserId, carts_products.getCartsProductsByCartId, (req, res, next) => {
+  if (req.cart_products && req.cart_products.length < 1) {
+    carts.deleteCart(req, res, next);
+  }
   req.logout((err) => {
     if (err) return next (err);
     req.flash('logout_msg', "You have been logged out.")
@@ -63,7 +66,7 @@ app.get('/logout', (req, res) => {
 });
 
 //Dashboard Endpoint
-app.get('/dashboard', (req, res) => {
+app.get('/users/:id/dashboard', (req, res) => {
   res.render('dashboard', { user: req.user });
 });
 

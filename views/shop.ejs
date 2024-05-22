@@ -5,6 +5,12 @@
   </head>
   <body>
     <h1 id="header">eShopping Shop</h1>
+    <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/dashboard';">
+      Dashboard
+    </button>
+    <button id="logout-button" onclick="window.location.href='/users/<%= user.id %>/logout';">
+      Logout
+    </button>
     <ul>
       <% productList.forEach(product => { %>
         <li>
