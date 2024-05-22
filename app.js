@@ -64,12 +64,15 @@ app.get('/logout', (req, res) => {
 
 //Dashboard Endpoint
 app.get('/dashboard', (req, res) => {
-  res.render('dashboard', { user: req.user.first_name });
+  res.render('dashboard', { user: req.user });
 });
 
 //Shop Endpoint
-app.get('/shop', (req, res) => {
-  res.render('shop');
+app.get('/users/:id/shop', carts.getCartByUserId, carts.createCart, async (req, res) => {
+  const results = await fetch('http://localhost:3000/products');
+  const productList = await results.json();
+
+  res.render('shop', { productList, user: req.user, cart_id: req.cart[0].id });
 });
 
 //Checkout Endpoint
@@ -94,7 +97,7 @@ app.delete('/products/:id', products.deleteProduct);
 
 //Carts Endpoints
 app.get('/carts', carts.getCarts);
-app.get('carts/:id', carts.getCartById);
+app.get('/carts/:id', carts.getCartById);
 app.get('/users/:id/cart', carts.getCartByUserId);
 app.post('/users/:id/cart', carts.createCart);
 app.put('/users/:id/cart/:cart_id', carts.updateCart);

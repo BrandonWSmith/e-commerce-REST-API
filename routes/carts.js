@@ -21,27 +21,35 @@ const getCartById = (req, res) => {
   });
 }
 
-const getCartByUserId = (req, res) => {
+const getCartByUserId = (req, res, next) => {
   const user_id = parseInt(req.params.id);
 
   db.query('SELECT * FROM carts WHERE user_id = $1', [user_id], (err, results) => {
     if (err) {
       throw err;
     }
-    res.status(200).send(results.rows);
+
+    req.cart = results.rows;
+    res.status(200);
+    next();
   });
 }
 
-const createCart = (req, res) => {
-  const user_id = parseInt(req.params.id);
-  const created = new Date();
+const createCart = (req, res, next) => {
+  if (req.cart.length < 1) {
+    const user_id = parseInt(req.params.id);
+    const created = new Date();
 
-  db.query('INSERT INTO carts (user_id, created) VALUES ($1, $2) RETURNING *', [user_id, created], (err, results) => {
-    if (err) {
-      throw err;
-    }
-    res.status(201).send(`Cart created with ID: ${results.rows[0].id}`);
-  });
+    db.query('INSERT INTO carts (user_id, created) VALUES ($1, $2) RETURNING *', [user_id, created], (err, results) => {
+      if (err) {
+        throw err;
+      }
+      console.log(`Cart created with ID: ${results.rows[0].id}`);
+      req.cart = results.rows;
+      res.status(201);
+    });
+  }
+  next();
 }
 
 const updateCart = (req, res) => {

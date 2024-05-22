@@ -38,7 +38,8 @@ const addToCart = async (req, res) => {
       if (err) {
         throw err;
       }
-      res.status(201).send(`Product ID: ${product_id} added to cart ID: ${cart_id}`);
+      console.log(`Product ID: ${product_id} added to cart ID: ${cart_id}`);
+      res.status(201);
     });
   }
 }

@@ -4,9 +4,9 @@
     <title>eShopping Dashboard</title>
   </head>
   <body>
-    <h1 id="header">Welcome, <%= user.charAt(0).toUpperCase() + user.slice(1) %></h1>
+    <h1 id="header">Welcome, <%= user.first_name.charAt(0).toUpperCase() + user.first_name.slice(1) %></h1>
     <p id="greeting-prompt">What would you like to do?</p>
-    <button id="shop-button" onclick="window.location.href='/shop';">
+    <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/shop';">
       Shop
     </button>
     <button id="logout-button" onclick="window.location.href='/logout';">

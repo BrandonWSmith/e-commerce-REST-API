@@ -5,5 +5,20 @@
   </head>
   <body>
     <h1 id="header">eShopping Shop</h1>
+    <ul>
+      <% productList.forEach(product => { %>
+        <li>
+          <%= product.name %>
+          </br>
+          <%= product.price %>
+          </br>
+          <%= product.description %>
+          </br>
+          <form action="/users/<%= user.id %>/cart/<%= cart_id %>/products?product_id=<%= product.id %>&quantity=1" method="post">
+            <button type="submit">Add To Cart</button>
+          </form>
+        </li>
+      <% }); %>
+    </ul>
   </body>
 </html>
