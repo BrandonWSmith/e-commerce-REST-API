@@ -1,11 +1,13 @@
 const db = require('../db/index');
 
-const getProducts = (req, res) => {
+const getProducts = (req, res, next) => {
   db.query('SELECT * FROM products ORDER BY id ASC', (err, results) => {
     if (err) {
       throw err;
     }
-    res.status(200).json(results.rows);
+    req.products = results.rows;
+    res.status(200);
+    next();
   });
 }
 

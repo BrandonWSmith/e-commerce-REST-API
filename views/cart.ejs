@@ -14,20 +14,30 @@
     <button id="logout-button" onclick="window.location.href='/users/<%= user.id %>/logout';">
       Logout
     </button>
-    <ul>
-      <% if (cart_products.length < 1) { %>
-          <li>Your cart is empty</li>
-      <% } %>
-      <% cart_products.forEach(product => { %>
-        <li>
-          <%= product.name %>
-          </br>
-          Quantity: <%= product.quantity %>
-          </br>
-          Total: <%= product.total %>
-          </br>
-        </li>
-      <% }); %>
-    </ul>
+    <% if (cart_products.length < 1) { %>
+      <ul>
+        <li>Your cart is empty</li>
+      </ul>
+    <% } else { %>
+      <ul>
+        <% cart_products.forEach(product => { %>
+          <li>
+            <%= product.name %>
+            </br>
+            Quantity: <%= product.quantity %>
+            </br>
+            Total: <%= product.total %>
+            </br>
+            <form action="/users/<%= user.id %>/cart/<%= cart_id %>/products?product_id=<%= product.product_id %>" method="post">
+              <input type="hidden" name="_method" value="DELETE">
+              <button type="submit">Remove From Cart</button>
+            </form>
+          </li>
+        <% }); %>
+      </ul>
+      <form action="/users/<%= user.id %>/cart/<%= cart_id %>/checkout" method="post">
+        <button type="submit">Checkout</button>
+      </form>
+    <% } %>
   </body>
 </html>

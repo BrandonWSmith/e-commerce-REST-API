@@ -26,8 +26,7 @@ const addToOrder = async (req, res, next) => {
   const user_id = parseInt(req.params.id);
   const added = new Date();
 
-  const getCartId = await db.query('SELECT id FROM carts WHERE user_id = $1 ORDER BY id DESC', [user_id]);
-  const cart_id = parseInt(Object.values(getCartId.rows[0]));
+  const cart_id = parseInt(req.params.cart_id);
 
   const getProducts = await db.query('SELECT product_id FROM carts_products WHERE cart_id = $1', [cart_id]);
   const products = []

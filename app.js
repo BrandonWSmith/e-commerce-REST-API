@@ -5,6 +5,7 @@ const session = require('express-session');
 const flash = require('express-flash');
 const passport = require('passport');
 require('./config/passport');
+const methodOverride = require('method-override');
 const db = require('./db/index');
 const users = require('./routes/users');
 const products = require('./routes/products');
@@ -16,6 +17,13 @@ const orders_products = require('./routes/orders_products');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
+app.use(methodOverride((req, res) => {
+  if (req.body && typeof req.body === 'object' && '_method' in req.body){
+    const method = req.body._method;
+    delete req.body._method;
+    return method;
+  }
+}));
 
 app.use(
   session({
@@ -41,11 +49,13 @@ app.get('/login', (req, res) => {
 });
 app.post('/login', passport.authenticate('local',
   {
-    successRedirect: `/users/:id/dashboard`,
     failureRedirect: '/login',
     failureFlash: true
+  }),
+  (req, res) => {
+    res.redirect(`/users/${req.user.id}/dashboard`)
   }
-));
+);
 
 //Register Endpoints
 app.get('/register', (req, res) => {
@@ -66,28 +76,23 @@ app.get('/users/:id/logout', carts.getCartByUserId, carts_products.getCartsProdu
 });
 
 //Dashboard Endpoint
-app.get('/users/:id/dashboard', (req, res) => {
+app.get('/users/:id/dashboard', carts.getCartByUserId, carts.createCart, (req, res) => {
   res.render('dashboard', { user: req.user });
 });
 
 //Shop Endpoint
-app.get('/users/:id/shop', carts.getCartByUserId, carts.createCart, async (req, res) => {
-  const fetchProducts = await fetch('http://localhost:3000/products');
-  const product_list = await fetchProducts.json();
-
-  res.render('shop', { product_list, user: req.user, cart_id: req.cart[0].id });
+app.get('/users/:id/shop', carts.getCartByUserId, products.getProducts, (req, res) => {
+  res.render('shop', { product_list: req.products, user: req.user, cart_id: req.cart[0].id });
 });
 
 //Cart Endpoint
-app.get('/users/:id/cart', carts.getCartByUserId, carts_products.getCartsProductsByCartId, async (req, res) => {
-  const cart_products = req.cart_products;
-
-  res.render('cart', { cart_products, user: req.user })
+app.get('/users/:id/cart', carts.getCartByUserId, carts_products.getCartsProductsByCartId, (req, res) => {
+  res.render('cart', { cart_products: req.cart_products, user: req.user, cart_id: req.cart[0].id });
 });
 
 //Checkout Endpoint
 app.post('/users/:id/cart/:cart_id/checkout', orders.createOrder, orders_products.addToOrder, carts_products.deleteAllInCart, carts.deleteCart, (req, res) => {
-  res.send(req.session.flash);
+  res.redirect(`/users/${req.params.id}/dashboard`);
 });
 
 //Users Endpoints
@@ -120,8 +125,8 @@ app.get('/carts_products', carts_products.getCartsProducts);
 app.get('/users/:id/cart/:cart_id/products', carts_products.getCartsProductsByCartId);
 app.post('/users/:id/cart/:cart_id/products', carts_products.addToCart);
 app.put('/users/:id/cart/:cart_id/products', carts_products.updateInCart);
-app.delete('users/:id/cart/:cart_id/products', carts_products.deleteInCart, (req, res) => {
-  res.status(200).send(`Product ID: ${req.query.product_id} deleted from cart ID: ${req.params.cart_id}`);
+app.delete('/users/:id/cart/:cart_id/products', carts_products.deleteInCart, (req, res) => {
+  res.redirect('back');
 });
 
 //Orders Endpoints

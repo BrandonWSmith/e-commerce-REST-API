@@ -56,7 +56,7 @@ const addToCart = async (req, res) => {
 const updateInCart = async (req, res) => {
   const cart_id = parseInt(req.params.cart_id);
   const product_id = parseInt(req.query.product_id);
-  const quantity = parseInt(req.query.quantity);
+  const quantity = parseInt(req.body.quantity);
   const getPrice = await db.query('SELECT price FROM products WHERE id = $1', [product_id]);
   const price = Object.values(getPrice.rows[0]).toString().slice(1);
   const modified = new Date();
@@ -69,16 +69,18 @@ const updateInCart = async (req, res) => {
   });
 }
 
-const deleteInCart = (req, res, next) => {
+const deleteInCart = async (req, res, next) => {
   const cart_id = parseInt(req.params.cart_id);
   const product_id = parseInt(req.query.product_id);
+  const getProductName = await db.query('SELECT name FROM products WHERE id = $1', [product_id]);
+  const product_name = Object.values(getProductName.rows[0]).toString();
 
   db.query('DELETE FROM carts_products WHERE cart_id = $1 AND product_id = $2', [cart_id, product_id], (err, results) => {
     if (err) {
       throw err;
     }
-    //res.status(200).send(`Product ID ${product_id} deleted from cart ID: ${cart_id}`);
-    req.flash('carts_products-deleted', `Product ID: ${product_id} deleted in cart ID: ${cart_id}`);
+    console.log(`${product_name} deleted in cart ID: ${cart_id}`);
+    res.status(200);
     next();
   });
 }
