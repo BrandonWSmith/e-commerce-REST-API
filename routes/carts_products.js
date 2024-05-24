@@ -18,7 +18,16 @@ const getCartsProductsByCartId = (req, res, next) => {
         throw err;
       }
       req.cart_products = results.rows;
-      req.cart.total = '$' + req.cart_products.reduce((acc, {total}) => acc + parseFloat(total.slice(1)), 0).toFixed(2);
+      if (req.cart_products.length > 0) {
+        req.cart.total = '$' +
+          req.cart_products.reduce((acc, {total}) =>
+            acc + parseFloat(total.replace(/[^0-9.-]+/g,"")),
+            0
+          )
+          .toFixed(2)
+          .toString()
+          .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+      }
       res.status(200);
       next();
     });
@@ -29,28 +38,30 @@ const getCartsProductsByCartId = (req, res, next) => {
 }
 
 const addToCart = async (req, res, next) => {
-  const cart_id = parseInt(req.params.cart_id);
-  const product_id = parseInt(req.query.product_id);
-  const getProductName = await db.query('SELECT name FROM products WHERE id = $1', [product_id]);
-  const product_name = Object.values(getProductName.rows[0]).toString();
-  const quantity = parseInt(req.body.quantity);
-  const getPrice = await db.query('SELECT price FROM products WHERE id = $1', [product_id]);
-  const price = Object.values(getPrice.rows[0]).toString().slice(1);
-  const added = new Date();
+  if (req.body.quantity) {
+    const cart_id = parseInt(req.params.cart_id);
+    const product_id = parseInt(req.query.product_id);
+    const getProductName = await db.query('SELECT name FROM products WHERE id = $1', [product_id]);
+    const product_name = Object.values(getProductName.rows[0]).toString();
+    const quantity = parseInt(req.body.quantity);
+    const getPrice = await db.query('SELECT price FROM products WHERE id = $1', [product_id]);
+    const price = Object.values(getPrice.rows[0]).toString().slice(1);
+    const added = new Date();
 
-  const checkExists = await db.query('SELECT * FROM carts_products WHERE cart_id = $1 AND product_id = $2', [cart_id, product_id]);
+    const checkExists = await db.query('SELECT * FROM carts_products WHERE cart_id = $1 AND product_id = $2', [cart_id, product_id]);
 
-  if (checkExists.rows.length != 0) {
-    updateInCart(req, res, next);
-  }
-  else {
-    db.query('INSERT INTO carts_products (quantity, price, cart_id, product_id, added) VALUES ($1, $2, $3, $4, $5) RETURNING *', [quantity, price, cart_id, product_id, added], (err, results) => {
-      if (err) {
-        throw err;
-      }
-      console.log(`${product_name} x ${quantity} added to cart ID: ${cart_id}`);
-      res.status(201);
-    });
+    if (checkExists.rows.length != 0) {
+      updateInCart(req, res, next);
+    }
+    else {
+      db.query('INSERT INTO carts_products (quantity, price, cart_id, product_id, added) VALUES ($1, $2, $3, $4, $5) RETURNING *', [quantity, price, cart_id, product_id, added], (err, results) => {
+        if (err) {
+          throw err;
+        }
+        console.log(`${product_name} x ${quantity} added to cart ID: ${cart_id}`);
+        res.status(201);
+      });
+    }
   }
   next();
 }
