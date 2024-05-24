@@ -37,7 +37,7 @@
             </li>
           <% }); %>
           <h3>Total: 
-            $<%= filtered_order_products.reduce((acc, {total}) => acc + parseFloat(total.slice(1)), 0); %>
+            $<%= filtered_order_products.reduce((acc, {total}) => acc + parseFloat(total.slice(1)), 0).toFixed(2); %>
           </h3>
           <form action="/orders/<%= order.id %>" method="post">
             <input type="hidden" name="_method" value="DELETE">

@@ -18,7 +18,7 @@ const getCartsProductsByCartId = (req, res, next) => {
         throw err;
       }
       req.cart_products = results.rows;
-      req.cart.total = '$' + req.cart_products.reduce((acc, {total}) => acc + parseFloat(total.slice(1)), 0);
+      req.cart.total = '$' + req.cart_products.reduce((acc, {total}) => acc + parseFloat(total.slice(1)), 0).toFixed(2);
       res.status(200);
       next();
     });
@@ -67,7 +67,7 @@ const updateInCart = async (req, res, next) => {
   const price = Object.values(getPrice.rows[0]).toString().slice(1);
   const modified = new Date();
 
-  db.query('UPDATE carts_products SET quantity = $1, price = $2, cart_id = $3, product_id = $4, modified = $5', [quantity, price, cart_id, product_id, modified], (err, results) => {
+  db.query('UPDATE carts_products SET quantity = $1, price = $2, cart_id = $3, modified = $4 WHERE product_id = $5', [quantity, price, cart_id, modified, product_id], (err, results) => {
     if (err) {
       throw err;
     }
