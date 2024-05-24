@@ -18,6 +18,7 @@ const getCartsProductsByCartId = (req, res, next) => {
         throw err;
       }
       req.cart_products = results.rows;
+      req.cart.total = '$' + req.cart_products.reduce((acc, {total}) => acc + parseFloat(total.slice(1)), 0);
       res.status(200);
       next();
     });
@@ -27,7 +28,7 @@ const getCartsProductsByCartId = (req, res, next) => {
   }
 }
 
-const addToCart = async (req, res) => {
+const addToCart = async (req, res, next) => {
   const cart_id = parseInt(req.params.cart_id);
   const product_id = parseInt(req.query.product_id);
   const getProductName = await db.query('SELECT name FROM products WHERE id = $1', [product_id]);
@@ -40,7 +41,7 @@ const addToCart = async (req, res) => {
   const checkExists = await db.query('SELECT * FROM carts_products WHERE cart_id = $1 AND product_id = $2', [cart_id, product_id]);
 
   if (checkExists.rows.length != 0) {
-    res.status(400).send(`Product ID: ${product_id} already in cart ID: ${cart_id}`);
+    updateInCart(req, res, next);
   }
   else {
     db.query('INSERT INTO carts_products (quantity, price, cart_id, product_id, added) VALUES ($1, $2, $3, $4, $5) RETURNING *', [quantity, price, cart_id, product_id, added], (err, results) => {
@@ -51,12 +52,17 @@ const addToCart = async (req, res) => {
       res.status(201);
     });
   }
+  next();
 }
 
-const updateInCart = async (req, res) => {
+const updateInCart = async (req, res, next) => {
   const cart_id = parseInt(req.params.cart_id);
   const product_id = parseInt(req.query.product_id);
-  const quantity = parseInt(req.body.quantity);
+  const getProductName = await db.query('SELECT name FROM products WHERE id = $1', [product_id]);
+  const product_name = Object.values(getProductName.rows[0]).toString();
+  const getCurrentQuantity = await db.query('SELECT quantity FROM carts_products WHERE cart_id = $1 AND product_id = $2', [cart_id, product_id]);
+  const currentQuantity = parseInt(Object.values(getCurrentQuantity.rows[0]));
+  const quantity = currentQuantity + parseInt(req.body.quantity);
   const getPrice = await db.query('SELECT price FROM products WHERE id = $1', [product_id]);
   const price = Object.values(getPrice.rows[0]).toString().slice(1);
   const modified = new Date();
@@ -65,7 +71,9 @@ const updateInCart = async (req, res) => {
     if (err) {
       throw err;
     }
-    res.status(200).send(`Product ID: ${product_id} updated in cart ID: ${cart_id}`);
+    console.log(`${product_name} quantity updated to ${quantity} in cart ID: ${cart_id}`);
+    res.status(200);
+    next();
   });
 }
 

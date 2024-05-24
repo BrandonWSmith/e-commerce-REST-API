@@ -24,9 +24,9 @@
     <% } else { %>
       <ul>
         <% orders.forEach(order => { %>
-
           <h3>Order #: <%= order.id %></h3>
-          <% order_products.filter(o => o.order_id === order.id).forEach(product => { %>
+          <% const filtered_order_products = order_products.filter(o => o.order_id === order.id) %>
+          <% filtered_order_products.forEach(product => { %>
             <li>
               <%= product.name %>
               </br>
@@ -36,6 +36,13 @@
               </br>
             </li>
           <% }); %>
+          <h3>Total: 
+            $<%= filtered_order_products.reduce((acc, {total}) => acc + parseFloat(total.slice(1)), 0); %>
+          </h3>
+          <form action="/orders/<%= order.id %>" method="post">
+            <input type="hidden" name="_method" value="DELETE">
+            <button type="submit">Cancel Order</button>
+          </form>
         <% }); %>
       </ul>
     <% } %>

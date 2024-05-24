@@ -87,7 +87,7 @@ app.get('/users/:id/shop', carts.getCartByUserId, products.getProducts, (req, re
 
 //Cart Endpoint
 app.get('/users/:id/cart', carts.getCartByUserId, carts_products.getCartsProductsByCartId, (req, res) => {
-  res.render('cart', { user: req.user, cart_products: req.cart_products, cart_id: req.cart[0].id });
+  res.render('cart', { user: req.user, cart_products: req.cart_products, cart_id: req.cart[0].id, total: req.cart.total });
 });
 
 //Checkout Endpoint
@@ -129,7 +129,9 @@ app.delete('/users/:id/cart/:cart_id', carts.deleteCart, (req, res) => {
 //Carts Products Routes
 app.get('/carts_products', carts_products.getCartsProducts);
 app.get('/users/:id/cart/:cart_id/products', carts_products.getCartsProductsByCartId);
-app.post('/users/:id/cart/:cart_id/products', carts_products.addToCart);
+app.post('/users/:id/cart/:cart_id/products', carts_products.addToCart, (req, res) => {
+  res.redirect('back');
+});
 app.put('/users/:id/cart/:cart_id/products', carts_products.updateInCart);
 app.delete('/users/:id/cart/:cart_id/products', carts_products.deleteInCart, (req, res) => {
   res.redirect('back');
@@ -146,7 +148,9 @@ app.post('/users/:id/orders', orders.createOrder, async (req, res) => {
   res.status(201).send(`Order created with ID: ${order_id}`);
 });
 app.put('/users/:id/orders/:order_id', orders.updateOrder);
-app.delete('/orders/:id', orders.deleteOrder);
+app.delete('/orders/:id', orders_products.deleteAllInOrder, orders.deleteOrder, (req, res) => {
+  res.redirect('back');
+});
 
 //Orders Products Routes
 app.get('/orders_products', orders_products.getOrderProducts);

@@ -85,7 +85,20 @@ const deleteInOrder = (req, res) => {
     if (err) {
       throw err;
     }
-    res.status(200).send(`Product ID ${product_id} deleted from cart ID: ${order_id}`);
+    res.status(200).send(`Product ID ${product_id} deleted from order ID: ${order_id}`);
+  });
+}
+
+const deleteAllInOrder = (req, res, next) => {
+  const order_id = parseInt(req.params.id);
+
+  db.query('DELETE FROM orders_products WHERE order_id = $1', [order_id], (err, results) => {
+    if (err) {
+      throw err;
+    }
+    console.log(`All products deleted from order ID: ${order_id}`);
+    res.status(200);
+    next();
   });
 }
 
@@ -94,5 +107,6 @@ module.exports = {
   getOrdersProductsByOrderId,
   addToOrder,
   updateInOrder,
-  deleteInOrder
+  deleteInOrder,
+  deleteAllInOrder
 }

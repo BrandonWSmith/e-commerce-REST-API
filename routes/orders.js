@@ -64,14 +64,16 @@ const updateOrder = (req, res) => {
   });
 }
 
-const deleteOrder = (req, res) => {
+const deleteOrder = (req, res, next) => {
   const id = parseInt(req.params.id);
 
   db.query('DELETE FROM orders WHERE id = $1', [id], (err, results) => {
     if (err) {
       throw err;
     }
-    res.status(200).send(`Order deleted with ID: ${id}`);
+    console.log(`Order deleted with ID: ${id}`);
+    res.status(200);
+    next();
   });
 }
 
