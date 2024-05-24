@@ -1,5 +1,4 @@
 const db = require('../db/index');
-const orders = require('./orders');
 
 const getCarts = (req, res) => {
   db.query('SELECT * FROM carts ORDER BY id ASC', (err, results) => {

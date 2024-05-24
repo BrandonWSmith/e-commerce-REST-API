@@ -82,12 +82,12 @@ app.get('/users/:id/dashboard', carts.getCartByUserId, carts.createCart, (req, r
 
 //Shop Endpoint
 app.get('/users/:id/shop', carts.getCartByUserId, products.getProducts, (req, res) => {
-  res.render('shop', { product_list: req.products, user: req.user, cart_id: req.cart[0].id });
+  res.render('shop', { user: req.user, product_list: req.products, cart_id: req.cart[0].id });
 });
 
 //Cart Endpoint
 app.get('/users/:id/cart', carts.getCartByUserId, carts_products.getCartsProductsByCartId, (req, res) => {
-  res.render('cart', { cart_products: req.cart_products, user: req.user, cart_id: req.cart[0].id });
+  res.render('cart', { user: req.user, cart_products: req.cart_products, cart_id: req.cart[0].id });
 });
 
 //Checkout Endpoint
@@ -95,14 +95,20 @@ app.post('/users/:id/cart/:cart_id/checkout', orders.createOrder, orders_product
   res.redirect(`/users/${req.params.id}/dashboard`);
 });
 
-//Users Endpoints
+//Orders Endpoint
+app.get('/users/:id/orders', orders.getOrdersByUserId, orders_products.getOrdersProductsByOrderId, (req, res) => {
+
+  res.render('orders', { user: req.user, orders: req.orders, order_products: req.order_products });
+});
+
+//Users Routes
 app.get('/users', users.getUsers);
 app.get('/users/:id', users.getUsersById);
 app.post('/users', users.createUser);
 app.put('/users/:id', users.updateUser);
 app.delete('/users/:id', users.deleteUser);
 
-//Products Endpoints
+//Products Routes
 app.get('/products', products.getProducts);
 app.get('/products/:id', products.getProductById);
 app.get('/products?name={name}', products.getProductByName);
@@ -110,7 +116,7 @@ app.post('/products', products.createProduct);
 app.put('/products/:id', products.updateProduct);
 app.delete('/products/:id', products.deleteProduct);
 
-//Carts Endpoints
+//Carts Routes
 app.get('/carts', carts.getCarts);
 app.get('/carts/:id', carts.getCartById);
 app.get('/users/:id/cart', carts.getCartByUserId);
@@ -120,7 +126,7 @@ app.delete('/users/:id/cart/:cart_id', carts.deleteCart, (req, res) => {
   res.status(200).send(`Cart deleted with ID: ${req.params.cart_id}`);
 });
 
-//Carts Products Endpoints
+//Carts Products Routes
 app.get('/carts_products', carts_products.getCartsProducts);
 app.get('/users/:id/cart/:cart_id/products', carts_products.getCartsProductsByCartId);
 app.post('/users/:id/cart/:cart_id/products', carts_products.addToCart);
@@ -129,7 +135,7 @@ app.delete('/users/:id/cart/:cart_id/products', carts_products.deleteInCart, (re
   res.redirect('back');
 });
 
-//Orders Endpoints
+//Orders Routes
 app.get('/orders', orders.getOrders);
 app.get('/orders/:id', orders.getOrderById);
 app.get('/users/:id/orders', orders.getOrdersByUserId);
@@ -142,7 +148,7 @@ app.post('/users/:id/orders', orders.createOrder, async (req, res) => {
 app.put('/users/:id/orders/:order_id', orders.updateOrder);
 app.delete('/orders/:id', orders.deleteOrder);
 
-//Orders Products Endpoints
+//Orders Products Routes
 app.get('/orders_products', orders_products.getOrderProducts);
 app.get('/users/:id/orders/:order_id/products', orders_products.getOrdersProductsByOrderId);
 app.post('/users/:id/orders/:order_id/products', orders_products.addToOrder, async (req, res) => {

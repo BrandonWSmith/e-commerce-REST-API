@@ -9,15 +9,23 @@ const getOrderProducts = (req, res) => {
   });
 }
 
-const getOrdersProductsByOrderId = (req, res) => {
-  const order_id = parseInt(req.params.id);
+const getOrdersProductsByOrderId = async (req, res, next) => {
+  let order_products = [];
+  for (const order in req.orders) {
+    const order_id = parseInt(req.orders[order].id);
 
-  db.query('SELECT * FROM orders_products WHERE order_id = $1', [order_id], (err, results) => {
-    if (err) {
-      throw err;
-    }
-    res.status(200).send(results.rows);
-  });
+    order_products.push(await new Promise((resolve, reject) => {
+      db.query('SELECT * FROM orders_products JOIN products ON orders_products.product_id = products.id WHERE order_id = $1', [order_id], (err, results) => {
+        if (err) {
+          reject(err);
+        }
+        res.status(200);
+        resolve(results.rows);
+      });         
+    }));
+  }
+  req.order_products = order_products.flat();
+  next();
 }
 
 const addToOrder = async (req, res, next) => {

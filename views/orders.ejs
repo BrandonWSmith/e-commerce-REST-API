@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>eShopping Orders</title>
+  </head>
+  <body>
+    <h1 id="header">Welcome, <%= user.first_name.charAt(0).toUpperCase() + user.first_name.slice(1) %></h1>
+    <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/dashboard';">
+      Dashboard
+    </button>
+    <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/shop';">
+      Shop
+    </button>
+    <button id="cart-button" onclick="window.location.href='/users/<%= user.id %>/cart';">
+      Cart
+    </button>
+    <button id="logout-button" onclick="window.location.href='/users/<%= user.id %>/logout';">
+      Logout
+    </button>
+    <% if (order_products.length < 1) { %>
+      <ul>
+        <li>You don't have any orders</li>
+      </ul>
+    <% } else { %>
+      <ul>
+        <% orders.forEach(order => { %>
+
+          <h3>Order #: <%= order.id %></h3>
+          <% order_products.filter(o => o.order_id === order.id).forEach(product => { %>
+            <li>
+              <%= product.name %>
+              </br>
+              Quantity: <%= product.quantity %>
+              </br>
+              Total: <%= product.total %>
+              </br>
+            </li>
+          <% }); %>
+        <% }); %>
+      </ul>
+    <% } %>
+  </body>
+</html>

@@ -25,14 +25,16 @@ const getOrderById = (req, res) => {
   });
 }
 
-const getOrdersByUserId = (req, res) => {
+const getOrdersByUserId = (req, res, next) => {
   const user_id = parseInt(req.params.id);
 
   db.query('SELECT * FROM orders WHERE user_id = $1', [user_id], (err, results) => {
     if (err) {
       throw err;
     }
-    res.status(200).send(results.rows);
+    req.orders = results.rows;
+    res.status(200);
+    next();
   });
 }
 
