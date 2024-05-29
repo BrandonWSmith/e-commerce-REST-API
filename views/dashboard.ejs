@@ -2,26 +2,38 @@
 <html>
   <head>
     <title>eShopping Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="/css/dashboard.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fanwood+Text:ital@0;1&family=Shrikhand&display=swap" rel="stylesheet">
   </head>
   <body>
-    <h1 id="header">Welcome, <%= user.first_name.charAt(0).toUpperCase() + user.first_name.slice(1) %></h1>
-    <ul>
+    <header>
+      <img id="logo-header" src="/images/shopping-cart-shadow.png">
+      <h1 id="header-title"><span class="e">e</span>Shopping</h1>
+    </header>
+    <main>
+      <h1 id="personal-greeting">Welcome, <%= user.first_name.charAt(0).toUpperCase() + user.first_name.slice(1) %></h1>
       <% if (messages.orders_products_added) { %>
-        <li><%= messages.orders_products_added %></li>
+        <ul class="messages">
+          <li><%= messages.orders_products_added %></li>
+        </ul>
       <% } %>
-    </ul>
-    <p id="greeting-prompt">What would you like to do?</p>
-    <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/shop';">
-      Shop
-    </button>
-    <button id="cart-button" onclick="window.location.href='/users/<%= user.id %>/cart';">
-      Cart
-    </button>
-    <button id="orders-button" onclick="window.location.href='/users/<%= user.id %>/orders';">
-      Orders
-    </button>
-    <button id="logout-button" onclick="window.location.href='/users/<%= user.id %>/logout';">
-      Logout
-    </button>
+      <p id="greeting-prompt">What would you like to do?</p>
+      <div class="buttons">
+        <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/shop';">
+          Shop
+        </button>
+        <button id="cart-button" onclick="window.location.href='/users/<%= user.id %>/cart';">
+          Cart
+        </button>
+        <button id="orders-button" onclick="window.location.href='/users/<%= user.id %>/orders';">
+          Orders
+        </button>
+        <button id="logout-button" onclick="window.location.href='/users/<%= user.id %>/logout';">
+          Logout
+        </button>
+      </div>
+    </main>
   </body>
 </html>

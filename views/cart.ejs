@@ -2,46 +2,59 @@
 <html>
   <head>
     <title>eShopping Cart</title>
+    <link rel="stylesheet" type="text/css" href="/css/cart.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fanwood+Text:ital@0;1&family=Shrikhand&display=swap" rel="stylesheet">
   </head>
   <body>
-    <h1 id="header">Welcome, <%= user.first_name.charAt(0).toUpperCase() + user.first_name.slice(1) %></h1>
-    <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/dashboard';">
-      Dashboard
-    </button>
-    <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/shop';">
-      Shop
-    </button>
-    <button id="orders-button" onclick="window.location.href='/users/<%= user.id %>/orders';">
-      Orders
-    </button>
-    <button id="logout-button" onclick="window.location.href='/users/<%= user.id %>/logout';">
-      Logout
-    </button>
-    <% if (cart_products.length < 1) { %>
-      <ul>
-        <li>Your cart is empty</li>
-      </ul>
-    <% } else { %>
-      <ul>
-        <% cart_products.forEach(product => { %>
-          <li>
-            <%= product.name %>
-            </br>
-            Quantity: <%= product.quantity %>
-            </br>
-            Total: <%= product.total %>
-            </br>
-            <form action="/users/<%= user.id %>/cart/<%= cart_id %>/products?product_id=<%= product.product_id %>" method="post">
-              <input type="hidden" name="_method" value="DELETE">
-              <button type="submit">Remove From Cart</button>
-            </form>
-          </li>
-        <% }); %>
-      </ul>
-      <h3>Total: <%= total %></h3>
-      <form action="/users/<%= user.id %>/cart/<%= cart_id %>/checkout" method="post">
-        <button type="submit">Checkout</button>
-      </form>
-    <% } %>
+    <header>
+      <img id="logo-header" src="/images/shopping-cart-shadow.png">
+      <h1 id="header-title"><span class="e">e</span>Shopping</h1>
+    </header>
+    <main>
+      <h1 id="personal-greeting">Welcome, <%= user.first_name.charAt(0).toUpperCase() + user.first_name.slice(1) %></h1>
+      <div class="buttons">
+        <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/dashboard';">
+          Dashboard
+        </button>
+        <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/shop';">
+          Shop
+        </button>
+        <button id="orders-button" onclick="window.location.href='/users/<%= user.id %>/orders';">
+          Orders
+        </button>
+        <button id="logout-button" onclick="window.location.href='/users/<%= user.id %>/logout';">
+          Logout
+        </button>
+      </div>
+      <% if (cart_products.length < 1) { %>
+        <ul class="messages">
+          <li>Your cart is empty</li>
+        </ul>
+      <% } else { %>
+        <ul class="cart-products">
+          <% cart_products.forEach(product => { %>
+            <li>
+              <b><%= product.name %></b>
+              </br>
+              Quantity: <%= product.quantity %>
+              </br>
+              Total: <%= product.total %>
+              </br>
+              <form action="/users/<%= user.id %>/cart/<%= cart_id %>/products?product_id=<%= product.product_id %>" method="post">
+                <input type="hidden" name="_method" value="DELETE">
+                <button class="remove-from-cart" type="submit">Remove From Cart</button>
+              </form>
+              </br>
+            </li>
+          <% }); %>
+        </ul>
+        <h2>Total: <%= total %></h2>
+        <form action="/users/<%= user.id %>/cart/<%= cart_id %>/checkout" method="post">
+          <button type="submit">Checkout</button>
+        </form>
+      <% } %>
+    </main>
   </body>
 </html>

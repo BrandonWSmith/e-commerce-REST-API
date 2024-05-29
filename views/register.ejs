@@ -2,34 +2,58 @@
 <html>
   <head>
     <title>eShopping Register</title>
+    <link rel="stylesheet" type="text/css" href="/css/register.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fanwood+Text:ital@0;1&family=Shrikhand&display=swap" rel="stylesheet">
   </head>
   <body>
-    <h1>Register</h1>
-    <ul>
-      <% if (messages.failure_msg) { %>
-        <li><%= messages.failure_msg %></li>
+    <header>
+      <img id="logo-header" src="/images/shopping-cart-shadow.png">
+      <h1 id="header-title"><span class="e">e</span>Shopping</h1>
+    </header>
+    <main>
+      <h1 id="register">Register</h1>
+      <% if (messages.email_exists) { %>
+        <ul class="messages">
+          <li><%= messages.email_exists %></li>
+        </ul>
       <% } %>
-    </ul>
-    <form action="/register" method="post">
-      <div id="first_name">
-        <label for="first_name">First Name:</label>
-        <input id="first_name" name="first_name" type="text" required />
-      </div>
-      <div id="last_name">
-        <label for="last_name">Last Name:</label>
-        <input id="last_name" name="last_name" type="text" required />
-      </div>
-      <div id="email">
-        <label for="email">Email:</label>
-        <input id="email" name="email" type="email" required />
-      </div>
-      <div id="password">
-        <label for="password">Password:</label>
-        <input id="password" name="password" type="password" required />
-      </div>
-      <div id="submit">
-        <button type="submit">Register</button>
-      </div>
-    </form>
+      <% if (messages.password_mismatch) { %>
+        <ul class="messages">
+          <li><%= messages.password_mismatch %></li>
+        </ul>
+      <% } %>
+      <form id="form" action="/register" method="post">
+        <div class="form-fields">
+          <div id="first_name">
+            <label for="first_name">First Name:</label>
+            <input id="first_name" name="first_name" type="text" required />
+          </div>
+          <div id="last_name">
+            <label for="last_name">Last Name:</label>
+            <input id="last_name" name="last_name" type="text" required />
+          </div>
+          <div id="email">
+            <label for="email">Email:</label>
+            <input id="email" name="email" type="email" required />
+          </div>
+          <div id="password">
+            <label for="password">Password:</label>
+            <input id="password" name="password" type="password" required />
+          </div>
+          <div id="reenter-password">
+            <label for="reenter_password">Re-enter Password:</label>
+            <input id="reenter_password" name="reenter_password" type="password" required />
+          </div>
+        </div>
+        <div class="buttons">
+          <button id="home-button" onclick="window.location.href='/';">
+            Home
+          </button>
+          <button type="submit">Register</button>
+        </div>
+      </form>
+    </main>
   </body>
 </html>

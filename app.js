@@ -17,6 +17,7 @@ const orders_products = require('./routes/orders_products');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
+app.use(express.static(__dirname + '/public'));
 app.use(methodOverride((req, res) => {
   if (req.body && typeof req.body === 'object' && '_method' in req.body){
     const method = req.body._method;
@@ -111,7 +112,7 @@ app.delete('/users/:id', users.deleteUser);
 //Products Routes
 app.get('/products', products.getProducts);
 app.get('/products/:id', products.getProductById);
-app.get('/products?name={name}', products.getProductByName);
+app.get('/products', products.getProductByName);
 app.post('/products', products.createProduct);
 app.put('/products/:id', products.updateProduct);
 app.delete('/products/:id', products.deleteProduct);

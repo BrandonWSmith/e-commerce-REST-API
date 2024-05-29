@@ -27,28 +27,35 @@ const getUsersById = (req, res) => {
 }
 
 const createUser = async (req, res) => {
-  const { first_name, last_name, email, password } = req.body;
+  const { first_name, last_name, email, password, reenter_password } = req.body;
 
-  const userCheck = await db.query('SELECT * FROM users WHERE email = $1', [email.toLowerCase()]);
-  const userCheckArr = userCheck.rows;
+  if (password === reenter_password) {
+    const userCheck = await db.query('SELECT * FROM users WHERE email = $1', [email.toLowerCase()]);
+    const userCheckArr = userCheck.rows;
 
-  if (userCheckArr.length != 0) {
-    req.flash('failure_msg', "Email already registered. Please try another email or log in.");
-    res.redirect('/register');
-  }
-
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-
-  const created = new Date();
-
-  db.query('INSERT INTO users (first_name, last_name, email, password, created) VALUES ($1, $2, $3, $4, $5) RETURNING *', [first_name.toLowerCase(), last_name.toLowerCase(), email.toLowerCase(), hashedPassword, created], (err, results) => {
-    if (err) {
-      throw err;
+    if (userCheckArr.length != 0) {
+      req.flash('email_exists', "Email already registered. Please try another email or log in.");
+      res.redirect('/register');
     }
-    req.flash('success_msg', "You have been registered! Please log in.");
-    res.redirect('/login');
-  });
+    else {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const created = new Date();
+
+      db.query('INSERT INTO users (first_name, last_name, email, password, created) VALUES ($1, $2, $3, $4, $5) RETURNING *', [first_name.toLowerCase(), last_name.toLowerCase(), email.toLowerCase(), hashedPassword, created], (err, results) => {
+        if (err) {
+          throw err;
+        }
+        req.flash('success_msg', "You have been registered! Please log in.");
+        res.redirect('/login');
+      });
+    }
+  }
+  else {
+    req.flash('password_mismatch', "Password fields do not match. Please try again.");
+    res.redirect('back');
+  }
 }
 
 const updateUser = async (req, res) => {

@@ -43,24 +43,28 @@ const addToCart = async (req, res, next) => {
     const product_id = parseInt(req.query.product_id);
     const getProductName = await db.query('SELECT name FROM products WHERE id = $1', [product_id]);
     const product_name = Object.values(getProductName.rows[0]).toString();
+    const getCurrentQuantity = await db.query('SELECT quantity FROM carts_products WHERE cart_id = $1 AND product_id = $2', [cart_id, product_id]);
     const quantity = parseInt(req.body.quantity);
     const getPrice = await db.query('SELECT price FROM products WHERE id = $1', [product_id]);
     const price = Object.values(getPrice.rows[0]).toString().slice(1);
     const added = new Date();
 
-    const checkExists = await db.query('SELECT * FROM carts_products WHERE cart_id = $1 AND product_id = $2', [cart_id, product_id]);
+    if (getCurrentQuantity.rows.length > 0) {
+      const currentQuantity = parseInt(Object.values(getCurrentQuantity.rows[0]));
 
-    if (checkExists.rows.length != 0) {
       updateInCart(req, res, next);
+      
+      req.flash('updated_in_cart', `${product_name} quantity updated to ${currentQuantity + quantity} in cart ID: ${cart_id}`);
     }
     else {
       db.query('INSERT INTO carts_products (quantity, price, cart_id, product_id, added) VALUES ($1, $2, $3, $4, $5) RETURNING *', [quantity, price, cart_id, product_id, added], (err, results) => {
         if (err) {
           throw err;
         }
-        console.log(`${product_name} x ${quantity} added to cart ID: ${cart_id}`);
         res.status(201);
       });
+      console.log(`${product_name} x ${quantity} added to cart ID: ${cart_id}`);
+      req.flash('added_to_cart', `${product_name} x ${quantity} added to cart ID: ${cart_id}`);
     }
   }
   next();
@@ -82,10 +86,11 @@ const updateInCart = async (req, res, next) => {
     if (err) {
       throw err;
     }
-    console.log(`${product_name} quantity updated to ${quantity} in cart ID: ${cart_id}`);
     res.status(200);
-    next();
   });
+  console.log(`${product_name} quantity updated to ${quantity} in cart ID: ${cart_id}`);
+  req.flash('updated_in_cart', `${product_name} quantity updated to ${quantity} in cart ID: ${cart_id}`);
+  next();
 }
 
 const deleteInCart = async (req, res, next) => {

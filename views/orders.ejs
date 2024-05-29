@@ -2,49 +2,62 @@
 <html>
   <head>
     <title>eShopping Orders</title>
+    <link rel="stylesheet" type="text/css" href="/css/orders.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fanwood+Text:ital@0;1&family=Shrikhand&display=swap" rel="stylesheet">
   </head>
   <body>
-    <h1 id="header">Welcome, <%= user.first_name.charAt(0).toUpperCase() + user.first_name.slice(1) %></h1>
-    <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/dashboard';">
-      Dashboard
-    </button>
-    <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/shop';">
-      Shop
-    </button>
-    <button id="cart-button" onclick="window.location.href='/users/<%= user.id %>/cart';">
-      Cart
-    </button>
-    <button id="logout-button" onclick="window.location.href='/users/<%= user.id %>/logout';">
-      Logout
-    </button>
-    <% if (order_products.length < 1) { %>
-      <ul>
-        <li>You don't have any orders</li>
-      </ul>
-    <% } else { %>
-      <ul>
-        <% orders.forEach(order => { %>
-          <h3>Order #: <%= order.id %></h3>
-          <% const filtered_order_products = order_products.filter(o => o.order_id === order.id) %>
-          <% filtered_order_products.forEach(product => { %>
-            <li>
-              <%= product.name %>
-              </br>
-              Quantity: <%= product.quantity %>
-              </br>
-              Total: <%= product.total %>
-              </br>
-            </li>
+    <header>
+      <img id="logo-header" src="/images/shopping-cart-shadow.png">
+      <h1 id="header-title"><span class="e">e</span>Shopping</h1>
+    </header>
+    <main>
+      <h1 id="personal-greeting">Welcome, <%= user.first_name.charAt(0).toUpperCase() + user.first_name.slice(1) %></h1>
+      <div class="buttons">
+        <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/dashboard';">
+          Dashboard
+        </button>
+        <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/shop';">
+          Shop
+        </button>
+        <button id="cart-button" onclick="window.location.href='/users/<%= user.id %>/cart';">
+          Cart
+        </button>
+        <button id="logout-button" onclick="window.location.href='/users/<%= user.id %>/logout';">
+          Logout
+        </button>
+      </div>
+      <% if (order_products.length < 1) { %>
+        <ul class="messages">
+          <li>You don't have any orders</li>
+        </ul>
+      <% } else { %>
+        <ul class="orders">
+          <% orders.forEach(order => { %>
+            <p>Order #: <%= order.id %></p>
+            <% const filtered_order_products = order_products.filter(o => o.order_id === order.id) %>
+            <% filtered_order_products.forEach(product => { %>
+              <li>
+                <b><%= product.name %></b>
+                </br>
+                Quantity: <%= product.quantity %>
+                </br>
+                Total: <%= product.total %>
+                </br>
+              </li>
+            <% }); %>
+            <p>Total: 
+              $<%= filtered_order_products.reduce((acc, {total}) => acc + parseFloat(total.replace(/[^0-9.-]+/g,"")), 0).toFixed(2).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","); %>
+            </p>
+            <form action="/orders/<%= order.id %>" method="post">
+              <input type="hidden" name="_method" value="DELETE">
+              <button class="cancel-order" type="submit">Cancel Order</button>
+            </form>
+            </br>
           <% }); %>
-          <h3>Total: 
-            $<%= filtered_order_products.reduce((acc, {total}) => acc + parseFloat(total.replace(/[^0-9.-]+/g,"")), 0).toFixed(2).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","); %>
-          </h3>
-          <form action="/orders/<%= order.id %>" method="post">
-            <input type="hidden" name="_method" value="DELETE">
-            <button type="submit">Cancel Order</button>
-          </form>
-        <% }); %>
-      </ul>
-    <% } %>
+        </ul>
+      <% } %>
+    </main>
   </body>
 </html>

@@ -1,7 +1,7 @@
 const db = require('../db/index');
 
 const getProducts = (req, res, next) => {
-  db.query('SELECT * FROM products ORDER BY id ASC', (err, results) => {
+  db.query('SELECT * FROM products ORDER BY name ASC', (err, results) => {
     if (err) {
       throw err;
     }
@@ -23,7 +23,7 @@ const getProductById = (req, res) => {
 }
 
 const getProductByName = (req, res) => {
-  const name = req.params.name;
+  const name = req.query.name.charAt(0).toUpperCase() + req.query.name.slice(1);
 
   db.query('SELECT * FROM products WHERE name = $1', [name], (err, results) => {
     if (err) {

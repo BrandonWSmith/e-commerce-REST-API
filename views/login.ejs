@@ -2,30 +2,46 @@
 <html>
   <head>
     <title>eShopping Login</title>
+    <link rel="stylesheet" type="text/css" href="/css/login.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fanwood+Text:ital@0;1&family=Shrikhand&display=swap" rel="stylesheet">
   </head>
   <body>
-    <h1>Login</h1>
-    <ul>
+    <header>
+      <img id="logo-header" src="/images/shopping-cart-shadow.png">
+      <h1 id="header-title"><span class="e">e</span>Shopping</h1>
+    </header>
+    <main>
+      <h1 id="login">Login</h1>
       <% if (messages.success_msg) { %>
-        <li><%= messages.success_msg %></li>
+        <ul class="messages">
+          <li><%= messages.success_msg %></li>
+        </ul>
       <% } %>
-
       <% if (messages.error) { %>
-        <li><%= messages.error %></li>
+        <ul class="messages">
+          <li><%= messages.error %></li>
+        </ul>
       <% } %>
-    </ul>
-    <form action="/login" method="post">
-      <div id="email">
-        <label for="email">Email:</label>
-        <input id="email" name="email" type="text" required />
-      </div>
-      <div id="password">
-        <label for="password">Password:</label>
-        <input id="password" name="password" type="password" required />
-      </div>
-      <div id="submit">
-        <button type="submit">Login</button>
-      </div>
-    </form>
+      <form id="form" action="/login" method="post">
+        <div class="form-fields">
+          <div id="email">
+            <label for="email">Email:</label>
+            <input id="email" name="email" type="text" required />
+          </div>
+          <div id="password">
+            <label for="password">Password:</label>
+            <input id="password" name="password" type="password" required />
+          </div>
+        </div>
+        <div class="buttons">
+          <button id="home-button" onclick="window.location.href='/';">
+              Home
+          </button>
+          <button type="submit">Login</button>
+        </div>
+      </form>
+    </main>
   </body>
 </html>
