@@ -40,19 +40,25 @@ app.use(passport.session());
 app.use(flash());
 
 //Root Endpoint
-app.get('/', (req, res) => {
-  res.render('index');
-});
+app.get('/',
+  (req, res) => {
+    res.render('index');
+  }
+);
 
 //Login Endpoints
-app.get('/login', (req, res) => {
-  res.render('login');
-});
-app.post('/login', passport.authenticate('local',
-  {
-    failureRedirect: '/login',
-    failureFlash: true
-  }),
+app.get('/login',
+  (req, res) => {
+    res.render('login');
+  }
+);
+app.post('/login',
+  passport.authenticate('local',
+    {
+      failureRedirect: '/login',
+      failureFlash: true
+    }
+  ),
   (req, res) => {
     res.redirect(`/users/${req.user.id}/dashboard`)
   }
@@ -65,42 +71,103 @@ app.get('/register', (req, res) => {
 app.post('/register', users.createUser);
 
 //Logout Endpoint
-app.get('/users/:id/logout', carts.getCartByUserId, carts_products.getCartsProductsByCartId, (req, res, next) => {
-  if (req.cart_products && req.cart_products.length < 1) {
-    carts.deleteCart(req, res, next);
+app.get('/users/:id/logout',
+  passport.authenticate('local',
+    {
+      failureRedirect: '/login',
+      failureFlash: true
+    }
+  ),
+  carts.getCartByUserId,
+  carts_products.getCartsProductsByCartId,
+  (req, res, next) => {
+    if (req.cart_products && req.cart_products.length < 1) {
+      carts.deleteCart(req, res, next);
+    }
+    req.logout((err) => {
+      if (err) return next (err);
+      req.flash('logout_msg', "You have been logged out.")
+      res.redirect('/');
+    });
   }
-  req.logout((err) => {
-    if (err) return next (err);
-    req.flash('logout_msg', "You have been logged out.")
-    res.redirect('/');
-  });
-});
+);
 
 //Dashboard Endpoint
-app.get('/users/:id/dashboard', carts.getCartByUserId, carts.createCart, (req, res) => {
-  res.render('dashboard', { user: req.user });
-});
+app.get('/users/:id/dashboard', 
+  passport.authenticate('local',
+    {
+      failureRedirect: '/login',
+      failureFlash: true
+    }
+  ),
+  carts.getCartByUserId,
+  carts.createCart,
+  (req, res) => {
+    res.render('dashboard', { user: req.user });
+  }
+);
 
 //Shop Endpoint
-app.get('/users/:id/shop', carts.getCartByUserId, products.getProducts, (req, res) => {
-  res.render('shop', { user: req.user, product_list: req.products, cart_id: req.cart[0].id });
-});
+app.get('/users/:id/shop',
+  passport.authenticate('local',
+    {
+      failureRedirect: '/login',
+      failureFlash: true
+    }
+  ),
+  carts.getCartByUserId,
+  products.getProducts,
+  (req, res) => {
+    res.render('shop', { user: req.user, product_list: req.products, cart_id: req.cart[0].id });
+  }
+);
 
 //Cart Endpoint
-app.get('/users/:id/cart', carts.getCartByUserId, carts_products.getCartsProductsByCartId, (req, res) => {
-  res.render('cart', { user: req.user, cart_products: req.cart_products, cart_id: req.cart[0].id, total: req.cart.total });
-});
+app.get('/users/:id/cart',
+  passport.authenticate('local',
+    {
+      failureRedirect: '/login',
+      failureFlash: true
+    }
+  ),
+  carts.getCartByUserId,
+  carts_products.getCartsProductsByCartId,
+  (req, res) => {
+    res.render('cart', { user: req.user, cart_products: req.cart_products, cart_id: req.cart[0].id, total: req.cart.total });
+  }
+);
 
 //Checkout Endpoint
-app.post('/users/:id/cart/:cart_id/checkout', orders.createOrder, orders_products.addToOrder, carts_products.deleteAllInCart, carts.deleteCart, (req, res) => {
-  res.redirect(`/users/${req.params.id}/dashboard`);
-});
+app.post('/users/:id/cart/:cart_id/checkout',
+  passport.authenticate('local',
+    {
+      failureRedirect: '/login',
+      failureFlash: true
+    }
+  ),
+  orders.createOrder,
+  orders_products.addToOrder,
+  carts_products.deleteAllInCart,
+  carts.deleteCart,
+  (req, res) => {
+    res.redirect(`/users/${req.params.id}/dashboard`);
+  }
+);
 
 //Orders Endpoint
-app.get('/users/:id/orders', orders.getOrdersByUserId, orders_products.getOrdersProductsByOrderId, (req, res) => {
-
-  res.render('orders', { user: req.user, orders: req.orders, order_products: req.order_products });
-});
+app.get('/users/:id/orders',
+  passport.authenticate('local',
+    {
+      failureRedirect: '/login',
+      failureFlash: true
+    }
+  ),
+  orders.getOrdersByUserId,
+  orders_products.getOrdersProductsByOrderId,
+  (req, res) => {
+    res.render('orders', { user: req.user, orders: req.orders, order_products: req.order_products });
+  }
+);
 
 //Users Routes
 app.get('/users', users.getUsers);

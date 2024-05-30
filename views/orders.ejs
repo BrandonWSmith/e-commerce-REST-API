@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title>eShopping Orders</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="User orders, where a user can see the the orders they've placed after checking out from their cart page.">
     <link rel="stylesheet" type="text/css" href="/css/orders.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -9,13 +11,13 @@
   </head>
   <body>
     <header>
-      <img id="logo-header" src="/images/shopping-cart-shadow.png">
+      <img id="logo-header" src="/images/shopping-cart-shadow.png" alt="logo">
       <h1 id="header-title"><span class="e">e</span>Shopping</h1>
     </header>
     <main>
       <h1 id="personal-greeting">Welcome, <%= user.first_name.charAt(0).toUpperCase() + user.first_name.slice(1) %></h1>
       <div class="buttons">
-        <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/dashboard';">
+        <button id="dashboard-button" onclick="window.location.href='/users/<%= user.id %>/dashboard';">
           Dashboard
         </button>
         <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/shop';">

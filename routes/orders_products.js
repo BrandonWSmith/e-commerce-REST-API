@@ -31,7 +31,6 @@ const getOrdersProductsByOrderId = async (req, res, next) => {
 const addToOrder = async (req, res, next) => {
   const getOrderId = await db.query('SELECT id FROM orders ORDER BY id DESC');
   const order_id = parseInt(req.params.order_id) || parseInt(getOrderId.rows[0].id);
-  const user_id = parseInt(req.params.id);
   const added = new Date();
 
   const cart_id = parseInt(req.params.cart_id);
