@@ -6,13 +6,19 @@ const flash = require('express-flash');
 const passport = require('passport');
 require('./config/passport');
 const methodOverride = require('method-override');
+const usersRouter = require('./controllers/users');
+const productsRouter = require('./controllers/products');
+const cartsRouter = require('./controllers/carts');
+const cartsProductsRouter = require('./controllers/carts_products');
+const ordersRouter = require('./controllers/orders');
+const ordersProductsRouter = require('./controllers/orders_products');
 const db = require('./db/index');
-const users = require('./routes/users');
-const products = require('./routes/products');
-const carts = require('./routes/carts');
-const carts_products = require('./routes/carts_products');
-const orders = require('./routes/orders');
-const orders_products = require('./routes/orders_products');
+const users = require('./models/users');
+const products = require('./models/products');
+const carts = require('./models/carts');
+const carts_products = require('./models/carts_products');
+const orders = require('./models/orders');
+const orders_products = require('./models/orders_products');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -60,7 +66,7 @@ app.post('/login',
     }
   ),
   (req, res) => {
-    res.redirect(`/users/${req.user.id}/dashboard`)
+    res.redirect(`/users/${req.user.id}/dashboard`);
   }
 );
 
@@ -169,71 +175,13 @@ app.get('/users/:id/orders',
   }
 );
 
-//Users Routes
-app.get('/users', users.getUsers);
-app.get('/users/:id', users.getUsersById);
-app.post('/users', users.createUser);
-app.put('/users/:id', users.updateUser);
-app.delete('/users/:id', users.deleteUser);
-
-//Products Routes
-app.get('/products', products.getProducts);
-app.get('/products/:id', products.getProductById);
-app.get('/products', products.getProductByName);
-app.post('/products', products.createProduct);
-app.put('/products/:id', products.updateProduct);
-app.delete('/products/:id', products.deleteProduct);
-
-//Carts Routes
-app.get('/carts', carts.getCarts);
-app.get('/carts/:id', carts.getCartById);
-app.get('/users/:id/cart', carts.getCartByUserId);
-app.post('/users/:id/cart', carts.createCart);
-app.put('/users/:id/cart/:cart_id', carts.updateCart);
-app.delete('/users/:id/cart/:cart_id', carts.deleteCart, (req, res) => {
-  res.status(200).send(`Cart deleted with ID: ${req.params.cart_id}`);
-});
-
-//Carts Products Routes
-app.get('/carts_products', carts_products.getCartsProducts);
-app.get('/users/:id/cart/:cart_id/products', carts_products.getCartsProductsByCartId);
-app.post('/users/:id/cart/:cart_id/products', carts_products.addToCart, (req, res) => {
-  res.redirect('back');
-});
-app.put('/users/:id/cart/:cart_id/products', carts_products.updateInCart);
-app.delete('/users/:id/cart/:cart_id/products', carts_products.deleteInCart, (req, res) => {
-  res.redirect('back');
-});
-
-//Orders Routes
-app.get('/orders', orders.getOrders);
-app.get('/orders/:id', orders.getOrderById);
-app.get('/users/:id/orders', orders.getOrdersByUserId);
-app.post('/users/:id/orders', orders.createOrder, async (req, res) => {
-  const getOrderId = await db.query('SELECT id FROM orders ORDER BY id DESC');
-  const order_id = Object.values(getOrderId.rows[0]).toString();
-
-  res.status(201).send(`Order created with ID: ${order_id}`);
-});
-app.put('/users/:id/orders/:order_id', orders.updateOrder);
-app.delete('/orders/:id', orders_products.deleteAllInOrder, orders.deleteOrder, (req, res) => {
-  res.redirect('back');
-});
-
-//Orders Products Routes
-app.get('/orders_products', orders_products.getOrderProducts);
-app.get('/users/:id/orders/:order_id/products', orders_products.getOrdersProductsByOrderId);
-app.post('/users/:id/orders/:order_id/products', orders_products.addToOrder, async (req, res) => {
-  const getProductIds = await db.query('SELECT product_id FROM orders_products WHERE order_id = $1', [req.params.order_id]);
-  const product_ids = [];
-  for (const product in getProductIds.rows) {
-    product_ids.push(parseInt(getProductIds.rows[0].product_id));
-  }
-
-  res.status(201).send(`Product IDs: ${product_ids.toString()} added to order ID: ${req.params.order_id}`);
-});
-app.put('/users/:id/orders/:order_id/products', orders_products.updateInOrder);
-app.delete('/users/:id/orders/:order_id/products', orders_products.deleteInOrder);
+//Routers
+app.use('/users', usersRouter);
+app.use('/products', productsRouter);
+app.use('/', cartsRouter);
+app.use('/', cartsProductsRouter);
+app.use('/', ordersRouter);
+app.use('/', ordersProductsRouter);
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
