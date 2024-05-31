@@ -30,14 +30,19 @@
           Logout
         </button>
       </div>
+      <% if (messages.order_deleted) { %>
+        <ul class="messages">
+          <li><%= messages.order_deleted %></li>
+        </ul>
+      <% } %>
       <% if (order_products.length < 1) { %>
         <ul class="messages">
           <li>You don't have any orders</li>
         </ul>
       <% } else { %>
-        <ul class="orders">
-          <% orders.forEach(order => { %>
-            <p>Order #: <%= order.id %></p>
+        <% orders.forEach(order => { %>
+          <ul class="orders">
+            <li class="order-number">Order #: <%= order.id %></li>
             <% const filtered_order_products = order_products.filter(o => o.order_id === order.id) %>
             <% filtered_order_products.forEach(product => { %>
               <li>
@@ -49,16 +54,17 @@
                 </br>
               </li>
             <% }); %>
-            <p>Total: 
+            <li class="total">Total: 
               $<%= filtered_order_products.reduce((acc, {total}) => acc + parseFloat(total.replace(/[^0-9.-]+/g,"")), 0).toFixed(2).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","); %>
-            </p>
-            <form action="/orders/<%= order.id %>" method="post">
-              <input type="hidden" name="_method" value="DELETE">
-              <button class="cancel-order" type="submit">Cancel Order</button>
-            </form>
-            </br>
-          <% }); %>
-        </ul>
+            </li>
+          </ul>
+          <form action="/orders/<%= order.id %>" method="post">
+            <input type="hidden" name="_method" value="DELETE">
+            <button class="cancel-order" type="submit">Cancel Order</button>
+          </form>
+          </br>
+        <% }); %>
+        
       <% } %>
     </main>
   </body>

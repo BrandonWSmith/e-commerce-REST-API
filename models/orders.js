@@ -71,7 +71,8 @@ const deleteOrder = (req, res, next) => {
     if (err) {
       throw err;
     }
-    console.log(`Order deleted with ID: ${id}`);
+    console.log(`Order ID: ${id} deleted`);
+    req.flash('order_deleted', `Order #: ${id} cancelled`)
     res.status(200);
     next();
   });
