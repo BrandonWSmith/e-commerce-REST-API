@@ -2,6 +2,7 @@ const express = require('express');
 const subdirectoriesRouter = express.Router();
 const passport = require('passport');
 require('../config/passport');
+const auth = require('../auth/auth');
 const users = require('../models/users');
 const products = require('../models/products');
 const carts = require('../models/carts');
@@ -18,6 +19,7 @@ subdirectoriesRouter.get('/',
 
 //Login
 subdirectoriesRouter.get('/login',
+  auth.checkLoggedIn,
   (req, res) => {
     res.render('login');
   }
@@ -35,19 +37,15 @@ subdirectoriesRouter.post('/login',
 );
 
 //Register
-subdirectoriesRouter.get('/register', (req, res) => {
+subdirectoriesRouter.get('/register',
+  auth.checkLoggedIn,
+  (req, res) => {
   res.render('register');
 });
 subdirectoriesRouter.post('/register', users.createUser);
 
 //Logout
 subdirectoriesRouter.get('/users/:id/logout',
-  passport.authenticate('local',
-    {
-      failureRedirect: '/login',
-      failureFlash: true
-    }
-  ),
   carts.getCartByUserId,
   carts_products.getCartsProductsByCartId,
   (req, res, next) => {
@@ -64,12 +62,7 @@ subdirectoriesRouter.get('/users/:id/logout',
 
 //Dashboard
 subdirectoriesRouter.get('/users/:id/dashboard', 
-  passport.authenticate('local',
-    {
-      failureRedirect: '/login',
-      failureFlash: true
-    }
-  ),
+  auth.checkAuthenticated,
   carts.getCartByUserId,
   carts.createCart,
   (req, res) => {
@@ -79,12 +72,7 @@ subdirectoriesRouter.get('/users/:id/dashboard',
 
 //Shop
 subdirectoriesRouter.get('/users/:id/shop',
-  passport.authenticate('local',
-    {
-      failureRedirect: '/login',
-      failureFlash: true
-    }
-  ),
+  auth.checkAuthenticated,
   carts.getCartByUserId,
   products.getProducts,
   (req, res) => {
@@ -94,12 +82,7 @@ subdirectoriesRouter.get('/users/:id/shop',
 
 //Cart
 subdirectoriesRouter.get('/users/:id/cart',
-  passport.authenticate('local',
-    {
-      failureRedirect: '/login',
-      failureFlash: true
-    }
-  ),
+  auth.checkAuthenticated,
   carts.getCartByUserId,
   carts_products.getCartsProductsByCartId,
   (req, res) => {
@@ -109,12 +92,7 @@ subdirectoriesRouter.get('/users/:id/cart',
 
 //Checkout
 subdirectoriesRouter.post('/users/:id/cart/:cart_id/checkout',
-  passport.authenticate('local',
-    {
-      failureRedirect: '/login',
-      failureFlash: true
-    }
-  ),
+  auth.checkAuthenticated,
   orders.createOrder,
   orders_products.addToOrder,
   carts_products.deleteAllInCart,
@@ -126,12 +104,7 @@ subdirectoriesRouter.post('/users/:id/cart/:cart_id/checkout',
 
 //Orders
 subdirectoriesRouter.get('/users/:id/orders',
-  passport.authenticate('local',
-    {
-      failureRedirect: '/login',
-      failureFlash: true
-    }
-  ),
+  auth.checkAuthenticated,
   orders.getOrdersByUserId,
   orders_products.getOrdersProductsByOrderId,
   (req, res) => {

@@ -26,6 +26,11 @@
           <li><%= messages.error %></li>
         </ul>
       <% } %>
+      <% if (messages.not_logged_in) { %>
+        <ul class="messages">
+          <li><%= messages.not_logged_in %></li>
+        </ul>
+      <% } %>
       <form id="form" action="/login" method="post">
         <div class="form-fields">
           <div id="email">

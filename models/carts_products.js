@@ -116,8 +116,8 @@ const deleteAllInCart = (req, res, next) => {
     if (err) {
       throw err;
     }
-    //res.status(200).send(`Product ID ${product_id} deleted from cart ID: ${cart_id}`);
-    req.flash('carts_products-deleted', `All products deleted in cart ID: ${cart_id}`);
+    console.log(`All products deleted in cart ID: ${cart_id}`);
+    req.flash('carts_products_deleted', `All products deleted in cart ID: ${cart_id}`);
     next();
   });
 }
