@@ -63,7 +63,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![eShopping Screen Shot][eShopping-screenshot]]
+![eShopping Screen Shot][eShopping-screenshot]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -85,7 +85,9 @@
 
 ### Prerequisites
 
-You will need the latest version of Node.js and Node Package Manager to run this project. You can install the latest version of Node at <a href="https://nodejs.org/">Nodejs.org</a>. You can install the latest version of NPM by running:
+You will need the latest version of Node.js and Node Package Manager to run this project. You can install the latest version of Node at <a href="https://nodejs.org/">Nodejs.org</a>.
+
+You can install the latest version of NPM by running:
  ```sh
  npm install npm@latest -g
  ```
@@ -179,7 +181,8 @@ Don't forget to give the project a star! Thanks again!
 <!-- CONTACT -->
 ## Contact
 
-Project Link: [https://github.com/BrandonWSmith/eShopping](https://github.com/BrandonWSmith/eShopping)
+* Email: BWSmith09@gmail.com
+* Project Link: [https://github.com/BrandonWSmith/eShopping](https://github.com/BrandonWSmith/eShopping)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -195,7 +198,7 @@ Project Link: [https://github.com/BrandonWSmith/eShopping](https://github.com/Br
 [stars-url]: https://github.com/BrandonWSmith/eShopping/stargazers
 [issues-shield]: https://img.shields.io/github/issues/BrandonWSmith/eShopping.svg?style=for-the-badge
 [issues-url]: https://github.com/BrandonWSmith/eShopping/issues
-[eShopping-screenshot]: public\images\screenshot.png
+[eShopping-screenshot]: public/images/screenshot.png
 [Node.js]: https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white
 [Node-url]: https://nodejs.org/
 [Express.js]: https://img.shields.io/badge/Express.js-404D59?style=for-the-badge
