@@ -90,7 +90,7 @@ You can install the latest version of NPM by running:
  npm install npm@latest -g
  ```
 
-You will also need PostgreSQL for the database. You can download the latest version of Postgres at <a href="https://www.postgresql.org/>PostgreSQL.org</a>.
+You will also need PostgreSQL for the database. You can download the latest version of Postgres at <a href="https://www.postgresql.org/">PostgreSQL.org</a>.
 
 ### Installation
 
