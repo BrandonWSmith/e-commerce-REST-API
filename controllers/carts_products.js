@@ -20,7 +20,7 @@ cartsProductsRouter.post('/users/:id/cart/:cart_id/products',
   auth.checkAuthenticated,
   carts_products.addToCart,
   (req, res) => {
-    res.redirect('back');
+    res.redirect(`/users/${req.params.id}/shop`);
   }
 );
 
@@ -35,7 +35,7 @@ cartsProductsRouter.delete('/users/:id/cart/:cart_id/products',
   auth.checkAuthenticated,
   carts_products.deleteInCart,
   (req, res) => {
-    res.redirect('back');
+    res.redirect(`/users/${req.params.id}/shop`);
   }
 );
 

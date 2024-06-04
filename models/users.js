@@ -54,7 +54,7 @@ const createUser = async (req, res) => {
   }
   else {
     req.flash('password_mismatch', "Password fields do not match. Please try again.");
-    res.redirect('back');
+    res.redirect('/register');
   }
 }
 

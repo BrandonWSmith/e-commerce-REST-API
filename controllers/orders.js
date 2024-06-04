@@ -1,7 +1,7 @@
 const express = require('express');
-const ordersRouter = express.Router();
 const auth = require('../auth/auth');
 const db = require('../db/index');
+const ordersRouter = express.Router();
 const orders = require('../models/orders');
 const orders_products = require('../models/orders_products');
 
@@ -47,7 +47,7 @@ ordersRouter.delete('/orders/:id',
   orders_products.deleteAllInOrder,
   orders.deleteOrder,
   (req, res) => {
-    res.redirect('back');
+    res.redirect(`/users/${req.user.id}/orders`);
   }
 );
 

@@ -23,18 +23,18 @@
       <% } %>
       <p id="greeting-prompt">What would you like to do?</p>
       <div class="buttons">
-        <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/shop';">
+        <a id="shop-button" href='/users/<%= user.id %>/shop';">
           Shop
-        </button>
-        <button id="cart-button" onclick="window.location.href='/users/<%= user.id %>/cart';">
+        </a>
+        <a id="cart-button" href='/users/<%= user.id %>/cart';">
           Cart
-        </button>
-        <button id="orders-button" onclick="window.location.href='/users/<%= user.id %>/orders';">
+        </a>
+        <a id="orders-button" href='/users/<%= user.id %>/orders';">
           Orders
-        </button>
-        <button id="logout-button" onclick="window.location.href='/users/<%= user.id %>/logout';">
+        </a>
+        <a id="logout-button" href='/users/<%= user.id %>/logout';">
           Logout
-        </button>
+        </a>
       </div>
     </main>
   </body>

@@ -17,18 +17,18 @@
     <main>
       <h1 id="personal-greeting">Welcome, <%= user.first_name.charAt(0).toUpperCase() + user.first_name.slice(1) %></h1>
       <div class="buttons">
-        <button id="dashboard-button" onclick="window.location.href='/users/<%= user.id %>/dashboard';">
+        <a id="dashboard-button" href='/users/<%= user.id %>/dashboard'>
           Dashboard
-        </button>
-        <button id="shop-button" onclick="window.location.href='/users/<%= user.id %>/shop';">
+        </a>
+        <a id="shop-button" href='/users/<%= user.id %>/shop'>
           Shop
-        </button>
-        <button id="orders-button" onclick="window.location.href='/users/<%= user.id %>/orders';">
+        </a>
+        <a id="orders-button" href='/users/<%= user.id %>/orders'>
           Orders
-        </button>
-        <button id="logout-button" onclick="window.location.href='/users/<%= user.id %>/logout';">
+        </a>
+        <a id="logout-button" href='/users/<%= user.id %>/logout'>
           Logout
-        </button>
+        </a>
       </div>
       <% if (cart_products.length < 1) { %>
         <ul class="messages">
@@ -45,6 +45,7 @@
               Total: <%= product.total %>
               </br>
               <form action="/users/<%= user.id %>/cart/<%= cart_id %>/products?product_id=<%= product.product_id %>" method="post">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" name="_method" value="DELETE">
                 <button class="remove-from-cart" type="submit">Remove From Cart</button>
               </form>
@@ -54,7 +55,10 @@
         </ul>
         <h2>Total: <%= total %></h2>
         <form action="/users/<%= user.id %>/cart/<%= cart_id %>/checkout" method="post">
-          <button type="submit">Checkout</button>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button type="submit">
+            Checkout
+          </button>
         </form>
       <% } %>
     </main>

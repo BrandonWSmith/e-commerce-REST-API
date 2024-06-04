@@ -27,6 +27,7 @@
         </ul>
       <% } %>
       <form id="form" action="/register" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <div class="form-fields">
           <div id="first_name">
             <label for="first_name">First Name:</label>
@@ -50,10 +51,12 @@
           </div>
         </div>
         <div class="buttons">
-          <button id="home-button" onclick="window.location.href='/';">
+          <a id="home-button" href='/'>
             Home
+          </a>
+          <button type="submit">
+            Register
           </button>
-          <button type="submit">Register</button>
         </div>
       </form>
     </main>

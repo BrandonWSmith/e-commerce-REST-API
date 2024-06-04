@@ -17,18 +17,18 @@
     <main>
       <h1 id="shop">eShopping Shop</h1>
       <div class="buttons">
-        <button id="dashboard-button" onclick="window.location.href='/users/<%= user.id %>/dashboard';">
+        <a id="dashboard-button" href='/users/<%= user.id %>/dashboard'>
           Dashboard
-        </button>
-        <button id="cart-button" onclick="window.location.href='/users/<%= user.id %>/cart';">
+        </a>
+        <a id="cart-button" href='/users/<%= user.id %>/cart'>
           Cart
-        </button>
-        <button id="orders-button" onclick="window.location.href='/users/<%= user.id %>/orders';">
+        </a>
+        <a id="orders-button" href='/users/<%= user.id %>/orders'>
           Orders
-        </button>
-        <button id="logout-button" onclick="window.location.href='/users/<%= user.id %>/logout';">
+        </a>
+        <a id="logout-button" href='/users/<%= user.id %>/logout'>
           Logout
-        </button>
+        </a>
       </div>
       <% if (messages.added_to_cart) { %>
         <ul class="messages">
@@ -50,10 +50,13 @@
             <%= product.description %>
             </br>
             <form action="/users/<%= user.id %>/cart/<%= cart_id %>/products?product_id=<%= product.id %>" method="post">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <label for="quantity">Quantity:</label>
               <input type="number" id="quantity" name="quantity" min="1" max="1000">
               </br>
-              <button class="add-to-cart" type="submit">Add To Cart</button>
+              <button class="add-to-cart" type="submit">
+                Add To Cart
+              </button>
             </form>
             </br>
           </li>

@@ -1,8 +1,8 @@
 const express = require('express');
-const subdirectoriesRouter = express.Router();
+const auth = require('../auth/auth');
 const passport = require('passport');
 require('../config/passport');
-const auth = require('../auth/auth');
+const subdirectoriesRouter = express.Router();
 const users = require('../models/users');
 const products = require('../models/products');
 const carts = require('../models/carts');
@@ -21,7 +21,7 @@ subdirectoriesRouter.get('/',
 subdirectoriesRouter.get('/login',
   auth.checkLoggedIn,
   (req, res) => {
-    res.render('login');
+    res.render('login', { csrfToken: req.csrfToken() });
   }
 );
 subdirectoriesRouter.post('/login',
@@ -32,7 +32,7 @@ subdirectoriesRouter.post('/login',
     }
   ),
   (req, res) => {
-    res.redirect(`/users/${req.user.id}/dashboard`)
+    res.redirect(`/users/${req.user.id}/dashboard`);
   }
 );
 
@@ -40,7 +40,7 @@ subdirectoriesRouter.post('/login',
 subdirectoriesRouter.get('/register',
   auth.checkLoggedIn,
   (req, res) => {
-  res.render('register');
+  res.render('register', { csrfToken: req.csrfToken() });
 });
 subdirectoriesRouter.post('/register', users.createUser);
 
@@ -76,7 +76,7 @@ subdirectoriesRouter.get('/users/:id/shop',
   carts.getCartByUserId,
   products.getProducts,
   (req, res) => {
-    res.render('shop', { user: req.user, product_list: req.products, cart_id: req.cart[0].id });
+    res.render('shop', { user: req.user, product_list: req.products, cart_id: req.cart[0].id, csrfToken: req.csrfToken() });
   }
 );
 
@@ -86,7 +86,7 @@ subdirectoriesRouter.get('/users/:id/cart',
   carts.getCartByUserId,
   carts_products.getCartsProductsByCartId,
   (req, res) => {
-    res.render('cart', { user: req.user, cart_products: req.cart_products, cart_id: req.cart[0].id, total: req.cart.total });
+    res.render('cart', { user: req.user, cart_products: req.cart_products, cart_id: req.cart[0].id, total: req.cart.total, csrfToken: req.csrfToken() });
   }
 );
 
@@ -98,7 +98,7 @@ subdirectoriesRouter.post('/users/:id/cart/:cart_id/checkout',
   carts_products.deleteAllInCart,
   carts.deleteCart,
   (req, res) => {
-    res.redirect(`/users/${req.params.id}/dashboard`);
+    res.redirect(`/users/${req.user.id}/dashboard`);
   }
 );
 
@@ -108,7 +108,7 @@ subdirectoriesRouter.get('/users/:id/orders',
   orders.getOrdersByUserId,
   orders_products.getOrdersProductsByOrderId,
   (req, res) => {
-    res.render('orders', { user: req.user, orders: req.orders, order_products: req.order_products });
+    res.render('orders', { user: req.user, orders: req.orders, order_products: req.order_products, csrfToken: req.csrfToken() });
   }
 );
 

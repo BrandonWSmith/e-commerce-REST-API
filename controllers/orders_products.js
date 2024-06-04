@@ -1,7 +1,7 @@
 const express = require('express');
-const ordersProductsRouter = express.Router();
 const auth = require('../auth/auth');
 const db = require('../db/index');
+const ordersProductsRouter = express.Router();
 const orders_products = require('../models/orders_products');
 
 //Get All Orders' Products

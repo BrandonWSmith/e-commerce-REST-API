@@ -80,7 +80,8 @@ h3 {
   justify-content: space-around;
 }
 
-button {
+button,
+a {
   transition: all 200ms ease-out;
   font-family: 'Fanwood Text', serif;
   font-size: 1.5rem;
@@ -93,7 +94,8 @@ button {
   border-radius: 5px;
 }
 
-button:hover {
+button:hover,
+a:hover {
   transform: scale(1.1);
   transition: all 100ms ease-out;
   color: #D90404;
@@ -103,12 +105,21 @@ button:hover {
   box-shadow: rgb(50, 50, 50) 1px 1px 2px;
 }
 
-button:active {
+button:active,
+a:active {
   transform: scale(1);
   transition: all 100ms ease-out;
   background-color: #D9D9D9;
   text-decoration: none;
   box-shadow: none;
+}
+
+a {
+  padding-block: 1px;
+  padding-inline: 6px;
+  text-decoration: none;
+  border-style: outset;
+  border-width: 2px;
 }
 
 .orders {
