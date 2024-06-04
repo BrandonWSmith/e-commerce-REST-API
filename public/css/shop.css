@@ -27,14 +27,13 @@ header {
 }
 
 #logo-header {
-  position: absolute;
-  left: 18.5rem;
   scale: 50%;
   padding: 10px;
 }
 
 #header-title {
   margin: 0;
+  padding-right: 5rem;
 }
 
 .e {
