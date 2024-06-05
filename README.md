@@ -105,6 +105,8 @@ You will also need PostgreSQL for the database. You can download the latest vers
    ```
 3. Set your environment varibles in `.env.example`
    ```sh
+   # Replace All Values to Your Own Configuration
+   
    #Server
    #This can be any port, it is recommended to use higher, less commonly used ports to prevent attacks
    PORT=Your port #Must be an integer not a string
